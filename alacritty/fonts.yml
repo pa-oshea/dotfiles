@@ -1,0 +1,20 @@
+# Font configuration
+font:
+  # Normal (roman) font face
+  normal:
+    family: "JetBrainsMono Nerd Font"
+
+  # Bold font face
+  bold:
+    family: "JetBrainsMono Nerd Font"
+
+  # Italic font face
+  italic:
+    family: "JetBrainsMono Nerd Font"
+
+  # Bold italic font face
+  bold_italic:
+    family: "JetBrainsMono Nerd Font"
+
+  # Point size
+  size: 10

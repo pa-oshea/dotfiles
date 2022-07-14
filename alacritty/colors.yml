@@ -1,0 +1,71 @@
+## Colors configuration
+schemes:
+  aesthetic_night: &aesthetic_dark
+    primary:
+      background: '#061115'
+      foreground: '#d9d7d6'
+    normal:
+      black:   '#1c252c'
+      red:     '#df5b61'
+      green:   '#78bb92'
+      yellow:  '#de8f78'
+      blue:    '#6791c9'
+      magenta: '#bc83e3'
+      cyan:    '#67afc1'
+      white:   '#d9d7d6'
+    bright:
+      black:   '#484e5b'
+      red:     '#f16269'
+      green:   '#8cd7aa'
+      yellow:  '#e9967e'
+      blue:    '#79aaeb'
+      magenta: '#c488ec'
+      cyan:    '#7acfe4'
+      white:   '#e5e5e5'
+  everforest_dark_hard: &everforest_dark_hard
+    primary:
+      background: '#2b3339'
+      foreground: '#d3c6aa'
+    normal:
+      black:   '#4b565c'
+      red:     '#e67e80'
+      green:   '#a7c080'
+      yellow:  '#dbbc7f'
+      blue:    '#7fbbb3'
+      magenta: '#d699b6'
+      cyan:    '#83c092'
+      white:   '#d3c6aa'
+    bright:
+      black:   '#4b565c'
+      red:     '#e67e80'
+      green:   '#a7c080'
+      yellow:  '#dbbc7f'
+      blue:    '#7fbbb3'
+      magenta: '#d699b6'
+      cyan:    '#83c092'
+      white:   '#d3c6aa'
+  onedark: &onedark
+    primary:
+      background: '#1e2127'
+      foreground: '#abb2bf'
+      normal:
+      black:   '#5c6370'
+      red:     '#e06c75'
+      green:   '#98c379'
+      yellow:  '#e5c07b'
+      blue:    '#61afef'
+      magenta: '#c678dd'
+      cyan:    '#56b6c2'
+      white:   '#abb2bf'
+    bright:
+      black:   '#5c6370'
+      red:     '#e06c75'
+      green:   '#98c379'
+      yellow:  '#e5c07b'
+      blue:    '#61afef'
+      magenta: '#c678dd'
+      cyan:    '#56b6c2'
+      white:   '#ffffff'
+# Apply
+colors: *onedark
+ 
