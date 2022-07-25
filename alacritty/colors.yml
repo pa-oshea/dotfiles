@@ -1,6 +1,6 @@
 ## Colors configuration
 schemes:
-  aesthetic_night: &aesthetic_dark
+  aesthetic_night: &aesthetic
     primary:
       background: '#061115'
       foreground: '#d9d7d6'
@@ -67,5 +67,5 @@ schemes:
       cyan:    '#56b6c2'
       white:   '#ffffff'
 # Apply
-colors: *onedark
+colors: *aesthetic
  
