@@ -1,1 +1,0 @@
-/home/patrick/.config/i3
