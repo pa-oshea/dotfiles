@@ -1,5 +1,16 @@
 require('which-key').setup()
 require('lualine').setup()
+require('symbols-outline').setup()
+require('Comment').setup()
+
+local lsp = require('lsp-zero')
+
+lsp.preset('recommended')
+lsp.ensure_installed({
+    'sumneko_lua',
+})
+lsp.nvim_workspace()
+lsp.setup()
 
 vim.opt.list = true
 -- vim.opt.listchars:append "space:⋅"
