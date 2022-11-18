@@ -9,9 +9,31 @@ local ensure_packer = function()
   return false
 end
 
+-- Auto command to reload neovim when this file is saved
+vim.cmd [[
+    augroup packer_user_config
+        autocmd!
+        autocmd BufWritePost packer.lua source <afile> | PackerSync
+    augroup end
+]]
+
+local status_ok, packer = pcall(require, "packer")
+if not status_ok then
+    return
+end
+
+-- popup window for packer
+packer.init {
+    display = {
+        open_fn = function ()
+            return require("packer.util").float { border = "rounded" }
+        end
+    }
+}
+
 local packer_bootstrap = ensure_packer()
 
-return require("packer").startup(function(use)
+return packer.startup(function(use)
     use("wbthomason/packer.nvim")
 
     use("nvim-lua/plenary.nvim")
