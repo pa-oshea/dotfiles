@@ -30,7 +30,7 @@ window:
   multiplier: 3
 
 ## Background opacity
-  opacity: 1.0
+  opacity: 0.85
 
 ## Cursor
 cursor:
@@ -42,3 +42,22 @@ cursor:
 
 ## Live config reload
 live_config_reload: true
+
+font:
+  normal:
+    family: JetBrains Mono
+    style: Regular
+
+  bold:
+    family: JetBrains Mono
+    style: Bold
+
+  italic:
+    family: JetBrains Mono
+    style: Italic
+
+  bold_italic:
+    family: JetBrains Mono
+    style: Bold Italic
+
+  size: 11

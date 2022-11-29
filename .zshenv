@@ -4,4 +4,4 @@ export STARSHIP_CONFIG=$HOME/.config/zsh/starship.toml
 export EDITOR='nvim'
 export TERMINAL='alacritty'
 
-export PATH="$HOME/.local/bin/:$PATH"
+export PATH="$HOME/.local/bin/:$HOME/.emacs.d/bin:$PATH"
