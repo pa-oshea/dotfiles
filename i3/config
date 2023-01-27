@@ -363,11 +363,11 @@ exec --no-startup-id betterlockscreen -w dim
 
 # set wallpaper
 # exec --no-startup-id sleep 2 && nitrogen --restore
-exec --no-startup-id feh --bg-fill ~/Pictures/wallpapers/g.png
+exec --no-startup-id feh --bg-fill ~/Pictures/wallpapers/absdark.png
 # /usr/share/endeavouros/backgrounds/endeavouros_i3.png
 
 # set powersavings for display:
-exec --no-startup-id xset s 480 dpms 600 600 600
+# exec --no-startup-id xset s 480 dpms 600 600 600
 
 # disable power saving (for example if using xscreensaver)
 #exec --no-startup-id xset -dpms
