@@ -37,6 +37,7 @@ alias v="nvim"
 alias lg="lazygit"
 
 eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
 
 # PLUGINS
 source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
