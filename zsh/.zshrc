@@ -39,6 +39,10 @@ alias lg="lazygit"
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
+case $- in *i*)
+	[ -z "$TMUX" ] && exec tmux 
+esac
+
 # PLUGINS
 source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
