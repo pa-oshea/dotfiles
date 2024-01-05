@@ -25,6 +25,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 alias ls="exa -la --icons"
 alias ll="exa -la --icons"
 alias l="exa -la --icons"
+alias syu="sudo pacman -Syu"
 
 # nvim shortcuts
 alias nvi="nvim"
