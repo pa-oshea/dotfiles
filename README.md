@@ -5,6 +5,7 @@
 - Audio
 - notifications
 - network manager
+- settings manager xfce4
 - polybar
 
 ## Tools needed
@@ -16,3 +17,6 @@
 - tpm
 - nvm
 - sdkman
+
+[Rofi themes](https://github.com/adi1090x/rofi)
+[Polybar themes](https://github.com/adi1090x/polybar-themes)
