@@ -241,7 +241,7 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 #exec_always --no-startup-id picom -b
 #
 # for custom config:
-#exec_always --no-startup-id picom --config  ~/.config/picom.conf
+exec_always --no-startup-id picom --config  ~/.config/picom.conf
 
 #############################################
 # autostart applications/services on login: #
@@ -275,8 +275,8 @@ exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id ~/.screenlayout/monitor.sh
 
 # set wallpaper
-# exec --no-startup-id sleep 2 && nitrogen --restore
-exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpapers/absdark.png
+exec --no-startup-id sleep 2 && nitrogen --restore
+#exec --no-startup-id sleep 1 && feh --bg-fill ~/Pictures/wallpapers/absdark.png
 
 # set powersavings for display:
 exec --no-startup-id xset s 480 dpms 600 600 600
