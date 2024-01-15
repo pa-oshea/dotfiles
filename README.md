@@ -7,6 +7,7 @@
 - network manager
 - settings manager xfce4
 - polybar
+- i3 lock screen
 
 ## Tools needed
 

@@ -18,6 +18,9 @@ bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '*?' backward-delete-char
 
+export EDITOR=nvim
+export VISUAL=nvim
+
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
@@ -25,7 +28,9 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 alias ls="exa -la --icons"
 alias ll="exa -la --icons"
 alias l="exa -la --icons"
+alias tree="ls --tree"
 alias syu="sudo pacman -Syu"
+
 
 # nvim shortcuts
 alias nvi="nvim"
