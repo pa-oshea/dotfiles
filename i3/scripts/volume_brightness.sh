@@ -4,7 +4,7 @@
 # taken from here: https://gitlab.com/Nmoleo/i3-volume-brightness-indicator
 
 # See README.md for usage instructions
-bar_color="#7f7fff"
+bar_color="#546e7a"
 volume_step=1
 brightness_step=2.5
 max_volume=100
@@ -31,15 +31,15 @@ function get_volume_icon {
     if [ "$volume" -eq 0 ] || [ "$mute" == "yes" ] ; then
         volume_icon="󰝟 "
     elif [ "$volume" -lt 50 ]; then
-        volume_icon=""
+        volume_icon=" "
     else
-        volume_icon=""
+        volume_icon=" "
     fi
 }
 
 # Always returns the same icon - I couldn't get the brightness-low icon to work with fontawesome
 function get_brightness_icon {
-    brightness_icon=""
+    brightness_icon=" "
 }
 
 # Displays a volume notification using dunstify
