@@ -272,7 +272,7 @@ exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id ~/.screenlayout/monitor.sh
 
 # set wallpaper
-exec --no-startup-id sleep 1 && feh --bg-scale ./wallpapers/wallpaper7.png
+exec --no-startup-id sleep 1 && feh --bg-scale ./wallpapers/wallpaper7.jpg
 
 # set powersavings for display:
 # exec --no-startup-id xset s 480 dpms 600 600 600
