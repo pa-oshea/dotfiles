@@ -2,6 +2,7 @@
 HISTFILE=~/.cache/zsh/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
+VIM="nvim"
 setopt autocd extendedglob nomatch notify
 
 autoload -Uz compinit
@@ -39,6 +40,7 @@ alias n="nvim"
 alias vim="nvim"
 alias vi="nvim"
 alias v="nvim"
+alias e="nvim ."
 
 alias lg="lazygit"
 

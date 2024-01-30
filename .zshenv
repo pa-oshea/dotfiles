@@ -5,4 +5,4 @@ export EDITOR='nvim'
 export TERMINAL='kitty'
 export TERM='kitty'
 
-export PATH="$HOME/.local/bin/:$HOME/.emacs.d/bin:~/go/bin:$PATH"
+export PATH="$HOME/.local/bin/:~/go/bin:$HOME/.cargo/bin/:$PATH"
