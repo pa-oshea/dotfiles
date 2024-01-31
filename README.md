@@ -18,6 +18,7 @@
 - tpm
 - nvm
 - sdkman
+- diff-so-fancy
 
 [Rofi themes](https://github.com/adi1090x/rofi)
 [Polybar themes](https://github.com/adi1090x/polybar-themes)
