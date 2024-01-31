@@ -93,6 +93,8 @@ alias glNoGraph='git log --color=always --format="%C(auto)%h%d %s %C(black)%C(bo
 _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
 _viewGitLogLine="$_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy'"
 
+# TODO: Find out how to copy preview result
+
 # fcoc - checkout git commit with previews
 fcoc() {
   local commit
