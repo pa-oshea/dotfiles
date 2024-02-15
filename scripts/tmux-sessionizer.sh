@@ -3,7 +3,7 @@
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
-    selected=$(find ~/ ~/dev ~/.config -mindepth 1 -maxdepth 1 -type d | fzf)
+	selected=$(zoxide query -i)
 fi
 
 if [[ -z $selected ]]; then
