@@ -27,3 +27,229 @@ function in() {
 function re() {
     yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rns
 }
+
+# mkdir and cd
+mkcd() {
+	mkdir -p -- "$1" && cd -P -- "$1"
+}
+
+# mkdir and touch file
+touchdir() {
+	mkdir -p "$(dirname "$1")" && touch "$1"
+}
+
+# fzf browse files
+find_files() {
+	IFS=$'\n' files=($(fzf --query="$1" --multi --select-1 --exit-0 --prompt 'files:' --preview='exa --tree --level=1 $(dirname {})'))
+	[[ -n "$files" ]] && ${EDITOR} "${files[@]}"
+}
+
+
+# fzf browse directories and cd into them
+find_dir() {
+	local dir
+	dir=$(fd -IH -t d -E '.git' 2> /dev/null | fzf --prompt 'folders:' +m --preview-window='right:50%:nohidden:wrap' --preview='exa --tree --level=2 {}') && cd "$dir"
+}
+
+
+# list env variables
+list_env() {
+	local var
+	var=$(printenv | cut -d= -f1 | fzf --prompt 'env:' --preview='printenv {}') \
+		&& echo "$var=$(printenv "$var")" \
+		&& unset var
+}
+
+
+# list go env variables
+list_goenv() {
+	local var
+	var=$(go env | cut -d= -f1 | fzf --prompt 'env:' --preview='go env {}') \
+		&& echo "$var=$(go env "$var")" \
+		&& unset var
+}
+
+
+# search regex in current directory
+search() {
+	local regex=$(gum input --prompt="find regex: " --placeholder="find pattern...")
+	if [[ -z "$regex" ]]; then
+		return
+	fi
+
+	local matching_files
+	case $1 in
+		-h)
+			matching_files=$(rg -l --hidden ${regex} | fzf --exit-0 --preview="rg --color=always -n '${regex}' {} ")
+			;;
+		-i)
+			matching_files=$(rg -i -l --hidden ${regex} | fzf --exit-0 --preview="rg -i --color=always -n '${regex}' {} ")
+			;;
+		*)
+			matching_files=$(rg -l -- ${regex} | fzf --exit-0 --preview="rg --color=always -n -- '${regex}' {} ")
+			;;
+	esac
+	[[ -n "$matching_files" ]] && ${EDITOR} "${matching_files}" -c/${regex}
+}
+
+
+# replace
+replace() {
+	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
+
+	local find_regex=$(gum input --prompt="find regex: " --placeholder="find pattern...")
+	if [[ -z "$find_regex" ]]; then
+		return
+	fi
+	local matching_files=$(rg -l --count-matches $find_regex | column -s: -t)
+
+	if [[ -n "$matching_files" ]]; then
+		gum style --border rounded --foreground "#d33682" --border-foreground "#2aa198" --margin "1 1" --padding "1 1" $matching_files
+	else
+		echo "no matching files"
+		return
+	fi
+
+	local replace_regex=$(gum input --prompt="replace regex: " --placeholder="replace pattern...")
+	if [[ ! -z "$replace_regex" ]]; then
+		gum confirm "replace $find_regex with $replace_regex ?" && \
+		echo $matching_files | \
+		cut -f1 -d' ' | \
+		xargs -n 1 -I {} -t sed -i '' "s/$find_regex/$replace_regex/g" {}
+	else
+		return
+	fi
+}
+
+
+# paginate help
+help() { "$@" --help | bat -l man -p ; }
+
+
+# preview files
+preview_files() {
+	local selection
+	if [[ -z "$1" ]]; then
+		selection="$(fd -u -t f -E '.git/' | fzf)" && preview_files "$selection"
+		return 0
+	fi
+
+	case $1 in
+		-e)
+			shift
+			selection="$(fd -u -t f -E '.git/' -e $1 | fzf --multi --select-1 --exit-0 | tr '\n' ' ')"
+			[[ -n "$selection" ]] && preview_files "${(z)selection}"
+			shift
+			;;
+		-t)
+			bat --style='grid' ~/.todo;;
+		-E)
+			bat --style='header,grid' .env 2>/dev/null ;;
+		*.md)
+			glow -s ~/.config/glowconfig/customglow.json -p $@;;
+		*.json)
+			jq '.' -C $1 | less -R;;
+		*.csv)
+			vd "$@";;
+		*.pdf)
+			zathura $1;;
+		*)
+			if [[ -f $1 ]]; then
+				bat --style='header,grid' $1
+			else
+				which $1 | bat -l sh --style 'grid'
+			fi
+	esac
+}
+
+
+# quick commit all
+quick_commit(){
+	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
+
+	TEXT="#268bd2"
+	BORDER="#2aa198"
+	local unstaged_list="$(git status -s)"
+	if [[ -z "$unstaged_list" ]]; then
+		echo "no files to commit"
+		return
+	fi
+
+	echo '\n{{ Color "'${BORDER}'" "" " on branch :"}} {{ Color "'${TEXT}'" "" "'$(git rev-parse --abbrev-ref HEAD)'" }}' | gum format -t template
+	gum style \
+		--border rounded \
+		--foreground "$TEXT" \
+		--border-foreground  "$BORDER" \
+		--margin "1 1" \
+		--padding "1 1" \
+		$unstaged_list
+
+	local message=$(gum input --prompt="commit: " --placeholder="commit message...")
+
+	if [[ -z "$message" ]]; then
+		echo "commit aborted"
+		return
+	fi
+
+	gum confirm "add files and commit?" && \
+	git add . && git commit -m "$message" && \
+	REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name @{u})"
+	[[ ! "$(git ls-remote --exit-code --heads origin $(git rev-parse --abbrev-ref HEAD))" ]] && { echo "no remote branch set"; return; }
+	gum confirm "push to $REMOTE?" && gum spin --spinner dot --title "git push..." --show-output git push || echo "changes not pushed"
+}
+
+
+# json_diff
+json_diff() {
+	if [[ $# -eq 2 ]]; then
+		delta =(jq -S . $1) =(jq -S . $2)
+	else
+		echo "expected two arguments"
+	fi
+}
+
+
+# curl weather
+weather() {
+	local location
+	[[ $# -eq 0 ]] && location="Cork" || location=$1
+	curl wttr.in/${location}\?F
+}
+
+
+# open PRs in nvim diffview
+nvim_diff() {
+	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
+
+	local branches="$(git branch -a --format='%(refname:short)' | grep -v 'HEAD' |
+		fzf -d' ' \
+		--prompt="branches:" \
+		--preview="git log --oneline --format='%C(bold blue)%h%C(reset) - %C(green)%ar%C(reset) - %C(cyan)%an%C(reset)%C(bold yellow)%d%C(reset): %s' --color=always {}" \
+		--header=$'\n' \
+		--no-info
+	)"
+
+	if [[ -n "$branches" ]]; then
+		nvim "+DiffviewOpen $branches" +tabonly
+	fi
+}
+
+
+# grep highlight with delta
+gr() { rg "$@" --json | delta --tabs=1; }
+
+
+# visualise todo file
+todo() {
+	local TODOFILE="${HOME}/.todo"
+	if [[ -z "$1" ]]; then
+		${EDITOR} ${TODOFILE}
+	fi
+
+	case $1 in
+		-v)
+			bat --style='grid' ${TODOFILE};;
+		-d)
+			truncate -s 0 ${TODOFILE};;
+	esac
+}
