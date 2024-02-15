@@ -8,6 +8,7 @@
 - settings manager xfce4
 - polybar
 - i3 lock screen
+- requirements file
 
 ## Tools needed
 
@@ -23,6 +24,7 @@
 - sdkman
 - diff-so-fancy
 - git-delta
+- navi
 
 [Rofi themes](https://github.com/adi1090x/rofi)
 [Polybar themes](https://github.com/adi1090x/polybar-themes)
