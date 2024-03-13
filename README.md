@@ -91,8 +91,19 @@ cargo install git-delta
 
 ### [diff-so-fancy](https://github.com/so-fancy/diff-so-fancy?tab=readme-ov-file#install)
 
+#### Ubuntu
+
 ```bash
-npm -g -i diff-so-fancy
+sudo add-apt-repository ppa:aos1/diff-so-fancy
+sudo apt update
+sudo apt install diff-so-fancy
+```
+
+#### Arch
+
+```bash
+
+yay diff-so-fancy
 ```
 
 ### [fd](https://github.com/sharkdp/fd)
