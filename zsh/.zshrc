@@ -23,17 +23,9 @@ export FZF_DEFAULT_OPTS="\
 	--bind shift-up:preview-up,shift-down:preview-down --bind ?:toggle-preview \
 	--color=bg+:#073642,gutter:-1,border:#546e7a,separator:#546e7a \
 	--pointer ▶ --marker "
+export FZF_DEFAULT_COMMAND="fd -H -t f -E '.git/'"
 
-# ALIAS
-alias syu="sudo pacman -Syu"
-alias ls="exa -la --icons --level=1 --sort='extension'"
-alias vim="nvim"
-alias e="nvim ."
-alias :q="exit"
-alias lg="lazygit"
-alias al="alias"
-
-AUTO_LS_COMMAND=('exa -la --icons' git-status)
+AUTO_LS_COMMAND=("exa -la --icons --level=1 --sort='extension'" git-status)
 
 # Load and initialise completion system
 autoload -Uz compinit
@@ -68,6 +60,15 @@ bindkey -M vicmd 'L' vi-end-of-line
 bindkey -M vicmd -s S ciw
 bindkey -M vicmd -s E 5e
 bindkey -M vicmd -s B 5b
+
+# ALIAS
+alias syu="sudo pacman -Syu"
+alias ls="exa -la --icons --level=1 --sort='extension'"
+alias vim="nvim"
+alias e="nvim ."
+alias :q="exit"
+alias lg="lazygit"
+alias al="alias"
 
 eval "$(starship init zsh)"
 eval "$(zoxide init --cmd cd zsh)"

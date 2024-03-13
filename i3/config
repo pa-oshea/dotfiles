@@ -238,7 +238,7 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 #exec_always --no-startup-id picom -b
 #
 # for custom config:
-exec_always --no-startup-id picom --config  ~/.config/picom.conf
+# exec_always --no-startup-id picom --config  ~/.config/picom.conf
 
 #############################################
 # autostart applications/services on login: #
@@ -266,10 +266,10 @@ exec --no-startup-id ~/.screenlayout/monitor.sh
 exec --no-startup-id sleep 1 && feh --bg-scale ~/dev/dotfiles/i3/wallpapers/wallpaper7.jpg
 
 # set powersavings for display:
-# exec --no-startup-id xset s 480 dpms 600 600 600
+exec --no-startup-id xset s 480 dpms 600 600 600
 
 # disable power saving (for example if using xscreensaver)
-exec --no-startup-id xset -dpms
+# exec --no-startup-id xset -dpms
 
 # Desktop notifications
 # dunst config used ~/.config/dunst/dunstrc
