@@ -1,5 +1,7 @@
 # dotfiles
 
+![Desktop](./screenshots/desktop.png)
+
 ## Install
 
 ### zsh
