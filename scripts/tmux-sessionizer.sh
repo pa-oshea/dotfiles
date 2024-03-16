@@ -3,6 +3,7 @@
 if [[ $# -eq 1 ]]; then
     selected=$1
 else
+	# fd -p "path" -d 1 | fzf
 	selected=$(zoxide query -i)
 fi
 

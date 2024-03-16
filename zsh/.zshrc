@@ -69,6 +69,7 @@ alias e="nvim ."
 alias :q="exit"
 alias lg="lazygit"
 alias al="alias"
+alias gst="git status"
 
 eval "$(starship init zsh)"
 eval "$(zoxide init --cmd cd zsh)"
