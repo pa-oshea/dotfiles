@@ -25,7 +25,7 @@ export FZF_DEFAULT_OPTS="\
 	--pointer ▶ --marker "
 export FZF_DEFAULT_COMMAND="fd -H -t f -E '.git/'"
 
-AUTO_LS_COMMAND=("exa -la --icons --level=1 --sort='extension'" git-status)
+AUTO_LS_COMMAND=("ll" git-status)
 
 # Load and initialise completion system
 autoload -Uz compinit
@@ -78,6 +78,8 @@ eval "$(direnv hook zsh)"
 
 ## Source files
 [ -f ~/.config/zsh/.zshfunc ] && source ~/.config/zsh/.zshfunc
+
+alias w="weather"
 
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
