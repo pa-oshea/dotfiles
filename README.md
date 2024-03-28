@@ -19,12 +19,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ### [go](https://go.dev/)
 
-##### [gvm](https://github.com/moovweb/gvm)
-
-```bash
-bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-```
-
 ### [nvm](https://github.com/nvm-sh/nvm)
 
 [Install](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
