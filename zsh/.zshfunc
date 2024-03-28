@@ -29,31 +29,31 @@ function re() {
 }
 
 # mkdir and cd
-mkcd() {
+function mkcd() {
 	mkdir -p -- "$1" && cd -P -- "$1"
 }
 
 # mkdir and touch file
-touchdir() {
+function touchdir() {
 	mkdir -p "$(dirname "$1")" && touch "$1"
 }
 
 # fzf browse files
-find_files() {
+function find_files() {
 	IFS=$'\n' files=($(fzf --query="$1" --multi --select-1 --exit-0 --prompt 'files:' --preview='exa --tree --level=1 $(dirname {})'))
 	[[ -n "$files" ]] && ${EDITOR} "${files[@]}"
 }
 
 
 # fzf browse directories and cd into them
-find_dir() {
+function find_dir() {
 	local dir
 	dir=$(fd -IH -t d -E '.git' 2> /dev/null | fzf --prompt 'folders:' +m --preview-window='right:50%:nohidden:wrap' --preview='exa --tree --level=2 {}') && cd "$dir"
 }
 
 
 # list env variables
-list_env() {
+function list_env() {
 	local var
 	var=$(printenv | cut -d= -f1 | fzf --prompt 'env:' --preview='printenv {}') \
 		&& echo "$var=$(printenv "$var")" \
@@ -62,7 +62,7 @@ list_env() {
 
 
 # list go env variables
-list_goenv() {
+function list_goenv() {
 	local var
 	var=$(go env | cut -d= -f1 | fzf --prompt 'env:' --preview='go env {}') \
 		&& echo "$var=$(go env "$var")" \
@@ -71,7 +71,7 @@ list_goenv() {
 
 
 # search regex in current directory
-search() {
+function search() {
 	local regex=$(gum input --prompt="find regex: " --placeholder="find pattern...")
 	if [[ -z "$regex" ]]; then
 		return
@@ -94,7 +94,7 @@ search() {
 
 
 # replace
-replace() {
+function replace() {
 	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
 
 	local find_regex=$(gum input --prompt="find regex: " --placeholder="find pattern...")
@@ -123,11 +123,11 @@ replace() {
 
 
 # paginate help
-help() { "$@" --help | bat -l man -p ; }
+function help() { "$@" --help | bat -l man -p ; }
 
 
 # preview files
-preview_files() {
+function preview_files() {
 	local selection
 	if [[ -z "$1" ]]; then
 		selection="$(fd -u -t f -E '.git/' | fzf)" && preview_files "$selection"
@@ -164,7 +164,7 @@ preview_files() {
 
 
 # quick commit all
-quick_commit(){
+function quick_commit(){
 	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
 
 	TEXT="#268bd2"
@@ -200,7 +200,7 @@ quick_commit(){
 
 
 # json_diff
-json_diff() {
+function json_diff() {
 	if [[ $# -eq 2 ]]; then
 		delta =(jq -S . $1) =(jq -S . $2)
 	else
@@ -210,7 +210,7 @@ json_diff() {
 
 
 # curl weather
-weather() {
+function weather() {
 	local location
 	[[ $# -eq 0 ]] && location="Cork" || location=$1
 	curl wttr.in/${location}\?F
@@ -218,7 +218,7 @@ weather() {
 
 
 # open PRs in nvim diffview
-nvim_diff() {
+function nvim_diff() {
 	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
 
 	local branches="$(git branch -a --format='%(refname:short)' | grep -v 'HEAD' |
@@ -236,11 +236,11 @@ nvim_diff() {
 
 
 # grep highlight with delta
-gr() { rg "$@" --json | delta --tabs=1; }
+function gr() { rg "$@" --json | delta --tabs=1; }
 
 
 # visualise todo file
-todo() {
+function todo() {
 	local TODOFILE="${HOME}/.todo"
 	if [[ -z "$1" ]]; then
 		${EDITOR} ${TODOFILE}
