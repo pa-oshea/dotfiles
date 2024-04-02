@@ -4,7 +4,8 @@ if [[ $# -eq 1 ]]; then
     selected=$1
 else
 	# fd -p "path" -d 1 | fzf
-	selected=$(zoxide query -i)
+	# zoxide query -i
+	selected=$(find ~/dev/ ~/workspace/ ~/projects/ ~/work/ -mindepth 1 -maxdepth 1 -type d | fzf)
 fi
 
 if [[ -z $selected ]]; then
