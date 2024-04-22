@@ -21,7 +21,9 @@ export FZF_DEFAULT_OPTS="\
 	--padding=1 \
 	--preview-window=right:50%:wrap \
 	--bind shift-up:preview-up,shift-down:preview-down --bind ?:toggle-preview \
-	--color=bg+:#073642,gutter:-1,border:#546e7a,separator:#546e7a \
+    --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+    --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+    --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
 	--pointer ▶ --marker "
 export FZF_DEFAULT_COMMAND="fd -H -t f -E '.git/'"
 
@@ -72,6 +74,12 @@ alias al="alias"
 alias gst="git status"
 alias gl="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all"
 
+alias w="weather"
+alias find_dir="find_dir()"
+alias touchdir="touchdir()"
+alias mkcd="mkcd()"
+alias list_env="list_env()"
+
 eval "$(starship init zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(direnv hook zsh)"
@@ -79,7 +87,6 @@ eval "$(direnv hook zsh)"
 ## Source files
 [ -f ~/.config/zsh/.zshfunc ] && source ~/.config/zsh/.zshfunc
 
-alias w="weather"
 
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm

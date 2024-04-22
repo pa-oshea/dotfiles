@@ -5,7 +5,7 @@
 #   - Bypass fuzzy finder if there's only one match (--select-1)
 #   - Exit if there's no match (--exit-0)
 function fe() {
-  IFS=$'\n' files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0))
+  IFS=$'\n' files=($(fzf --query="$1" --multi --select-1 --prompt 'files:' --preview 'bat --color=always {}' --preview-window '~3' --exit-0))
   [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
 }
 
@@ -37,13 +37,6 @@ function mkcd() {
 function touchdir() {
 	mkdir -p "$(dirname "$1")" && touch "$1"
 }
-
-# fzf browse files
-function find_files() {
-	IFS=$'\n' files=($(fzf --query="$1" --multi --select-1 --exit-0 --prompt 'files:' --preview='exa --tree --level=1 $(dirname {})'))
-	[[ -n "$files" ]] && ${EDITOR} "${files[@]}"
-}
-
 
 # fzf browse directories and cd into them
 function find_dir() {
