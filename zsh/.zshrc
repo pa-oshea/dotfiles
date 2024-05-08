@@ -153,7 +153,7 @@ export FZF_DEFAULT_COMMAND="fd -H -t f -E '.git/'"
 
 # ALIAS
 alias syu="sudo pacman -Syu"
-alias ls="exa -la --icons --level=1 --sort='extension'"
+alias ls="exa -lah --icons --level=1 --sort='extension'"
 alias vim="nvim"
 alias e="nvim ."
 alias :q="exit"
