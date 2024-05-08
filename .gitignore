@@ -1,3 +1,8 @@
 .zcompdump
 packer_compiled.lua
 .zsh_history
+.zim
+.zcompdump.dat
+.zcompdump.zwc
+.zhistory
+
