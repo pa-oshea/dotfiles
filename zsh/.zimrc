@@ -28,6 +28,12 @@ zmodule run-help
 zmodule fzf
 zmodule magic-enter
 zmodule wfxr/forgit
+zmodule joke/helm
+zmodule joke/k9s
+zmodule joke/zim-kubectl
+zmodule joke/zim-minikube
+zmodule joke/zim-yq
+
 
 #
 # Completion
