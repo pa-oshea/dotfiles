@@ -64,6 +64,30 @@ zstyle ':zim:input' double-dot-expand yes
 # If none is provided, the default '%n@%m: %~' is used.
 #zstyle ':zim:termtitle' format '%1~'
 
+# ignore case completions
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+# NOTE: don't use escape sequences here, fzf-tab will ignore them
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# preview directory's content with eza when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+# switch group using `<` and `>`
+zstyle ':fzf-tab:*' switch-group '<' '>'
+# zoxide
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always $realpath'
+
+# alias-finder
+zstyle ':omz:plugins:alias-finder' autoload yes # disabled by default
+zstyle ':omz:plugins:alias-finder' longer yes # disabled by default
+zstyle ':omz:plugins:alias-finder' exact yes # disabled by default
+zstyle ':omz:plugins:alias-finder' cheaper yes # disabled by default
+
 #
 # zsh-autosuggestions
 #
@@ -128,10 +152,10 @@ for key ('j') bindkey -M vicmd ${key} history-substring-search-down
 unset key
 # }}} End configuration added by Zim install
 
-VIM="nvim"
+# Load completions
+autoload -U compinit && compinit
 
-# tmux sessionizer
-bindkey -s "^f" 'tmux-sessionizer.sh\n'
+VIM="nvim"
 
 export EDITOR=nvim
 export VISUAL=nvim
@@ -158,9 +182,10 @@ alias vim="nvim"
 alias e="nvim ."
 alias :q="exit"
 alias lg="lazygit"
+alias f="tmux-sessionizer.sh"
 
 alias w="weather"
-alias list_env="list_env()"
+alias list_env="list_env"
 
 eval "$(starship init zsh)"
 eval "$(zoxide init --cmd cd zsh)"

@@ -33,6 +33,8 @@ zmodule joke/zim-k9s
 zmodule joke/zim-kubectl
 zmodule joke/zim-minikube
 zmodule joke/zim-yq
+zmodule ohmyzsh/ohmyzsh --root plugins/command-not-found
+zmodule ohmyzsh/ohmyzsh --root plugins/alias-finder
 
 
 #
