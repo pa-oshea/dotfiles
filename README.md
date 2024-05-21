@@ -2,13 +2,29 @@
 
 ![Desktop](./screenshots/desktop.png)
 
+## Linking
+
+```
+ln -s -r dunst ~/.config &
+ln -s -r i3 ~/.config &
+ln -s -r kitty ~/.config &
+ln -s -r picom ~/.config &
+ln -s -r polybar ~/.config &
+ln -s -r rofi ~/.config &
+ln -s -r zsh ~/.config &
+ln -s -r .zshenv ~ &
+ln -s -r .gitconfig ~ &
+ln -s -r .tmux.conf ~ &
+ln -s -r scripts/tmux-sessionizer.sh ~/.local/bin/ &
+mv fonts/* ~/.local/share/fonts/
+```
+
 ## Install
 
 ### zsh
 
 ```bash
 chsh -s $(which zsh)
-zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
 ```
 
 ### [rust](https://www.rust-lang.org/)
@@ -17,11 +33,22 @@ zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-### [go](https://go.dev/)
+#### Cargo packages
 
-### [nvm](https://github.com/nvm-sh/nvm)
+- [delta](https://github.com/dandavison/delta)
+- [fd](https://github.com/sharkdp/fd)
+- [ripgrep](https://github.com/BurntSushi/ripgrep)
+- [eza](https://github.com/eza-community/eza)
+- [tokei](https://github.com/XAMPPRocky/tokei)
+- [navi](https://github.com/denisidoro/navi)
 
-[Install](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
+```bash
+cargo install git-delta fd-find ripgrep eza tokei
+```
+
+```bash
+cargo install --locked navi
+```
 
 ### [sdkman](https://sdkman.io/)
 
@@ -59,59 +86,6 @@ curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | 
 go install github.com/jesseduffield/lazygit@latest
 ```
 
-### [delta](https://github.com/dandavison/delta)
-
-```bash
-cargo install git-delta
-```
-
-```gitconfig
-[core]
-    pager = delta
-
-[interactive]
-    diffFilter = delta --color-only
-
-[delta]
-    navigate = true    # use n and N to move between diff sections
-    light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
-
-[merge]
-    conflictstyle = diff3
-
-[diff]
-    colorMoved = default
-```
-
-### [diff-so-fancy](https://github.com/so-fancy/diff-so-fancy?tab=readme-ov-file#install)
-
-#### Ubuntu
-
-```bash
-sudo add-apt-repository ppa:aos1/diff-so-fancy
-sudo apt update
-sudo apt install diff-so-fancy
-```
-
-#### Arch
-
-```bash
-
-yay diff-so-fancy
-```
-
-### [fd](https://github.com/sharkdp/fd)
-
-```bash
-cargo install fd-find
-```
-
-### [ripgrep](https://github.com/BurntSushi/ripgrep)
-
-```bash
-cargo install ripgrep
-```
-
 ### [tmux](https://github.com/tmux/tmux/wiki/Installing)
 
 | Platform         | Install Command     |
@@ -139,27 +113,13 @@ sh autogen.sh
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 
-### [eza](https://github.com/eza-community/eza)
-
-```bash
-cargo install eza
-```
-
-### [navi](https://github.com/denisidoro/navi)
-
-```bash
-cargo install --locked navi
-```
-
 ## TODO
 
 - Audio
 - notifications
 - network manager
 - settings manager xfce4
-- polybar
 - i3 lock screen
-- requirements file
 
 [Rofi themes](https://github.com/adi1090x/rofi)
 [Polybar themes](https://github.com/adi1090x/polybar-themes)
