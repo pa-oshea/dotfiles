@@ -177,10 +177,10 @@ export FZF_DEFAULT_COMMAND="fd -H -t f -E '.git/'"
 
 # ALIAS
 alias syu="sudo pacman -Syu"
-alias ls="exa -lah --icons --level=1 --sort='extension'"
+alias ls="eza -lah --icons --level=1 --sort='extension'"
 alias vim="nvim"
 alias e="nvim ."
-alias :q="exit"
+alias q="exit"
 alias lg="lazygit"
 alias f="tmux-sessionizer.sh"
 
