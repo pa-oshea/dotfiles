@@ -40,14 +40,16 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
 - [eza](https://github.com/eza-community/eza)
 - [tokei](https://github.com/XAMPPRocky/tokei)
-- [navi](https://github.com/denisidoro/navi)
 
 ```bash
 cargo install git-delta fd-find ripgrep eza tokei
 ```
 
+- [navi](https://github.com/denisidoro/navi)
+- [bat](https://github.com/sharkdp/bat)
+
 ```bash
-cargo install --locked navi
+cargo install --locked navi bat
 ```
 
 ### [sdkman](https://sdkman.io/)
@@ -55,6 +57,10 @@ cargo install --locked navi
 ```bash
 curl -s "https://get.sdkman.io" | bash
 ```
+
+### [nvm](https://github.com/nvm-sh/nvm)
+
+[Install](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
 
 ### [neovim](https://github.com/neovim/neovim/blob/master/INSTALL.md)
 
