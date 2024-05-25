@@ -182,6 +182,7 @@ alias vim="nvim"
 alias e="nvim ."
 alias q="exit"
 alias lg="lazygit"
+alias lzd="lazydocker"
 alias f="tmux-sessionizer.sh"
 
 eval "$(starship init zsh)"
