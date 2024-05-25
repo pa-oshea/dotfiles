@@ -46,7 +46,7 @@ WORDCHARS=${WORDCHARS//[\/]}
 #
 
 # Set a custom prefix for the generated aliases. The default prefix is 'G'.
-zstyle ':zim:git' aliases-prefix 'h'
+zstyle ':zim:git' aliases-prefix 'f'
 
 #
 # input
