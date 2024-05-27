@@ -40,9 +40,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
 - [eza](https://github.com/eza-community/eza)
 - [tokei](https://github.com/XAMPPRocky/tokei)
+- [atac](https://github.com/Julien-cpsn/ATAC)
 
 ```bash
-cargo install git-delta fd-find ripgrep eza tokei
+cargo install git-delta fd-find ripgrep eza tokei atac
 ```
 
 - [navi](https://github.com/denisidoro/navi)
@@ -90,6 +91,12 @@ curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | 
 
 ```bash
 go install github.com/jesseduffield/lazygit@latest
+```
+
+### [lazydocker](https://github.com/jesseduffield/lazydocker)
+
+```bash
+go install github.com/jesseduffield/lazydocker@latest
 ```
 
 ### [tmux](https://github.com/tmux/tmux/wiki/Installing)
