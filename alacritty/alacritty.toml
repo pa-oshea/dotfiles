@@ -1,0 +1,28 @@
+import = ["/home/patrick/.config/alacritty/fonts.toml", "/home/patrick/.config/alacritty/mappings.toml", "/home/patrick/.config/alacritty/mocha.toml"]
+live_config_reload = true
+
+[colors]
+draw_bold_text_with_bright_colors = false
+
+# [cursor]
+# custom_cursor_colors = true
+# unfocused_hollow = false
+
+[cursor.style]
+blinking = "On"
+shape = "Block"
+
+[env]
+TERM = "alacritty"
+WINIT_X11_SCALE_FACTOR = "1.0"
+
+[window]
+decorations = "full"
+dynamic_title = true
+opacity = 1.0
+startup_mode = "Windowed"
+
+[window.dimensions]
+columns = 84
+lines = 24
+
