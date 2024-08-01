@@ -1,0 +1,23 @@
+/* colors */
+* {
+  al:   #00000000;
+  bg:   #1F1F1FFF;
+  bga:  #546e7a33;
+  bar:  #FFFFFFFF;
+  fg:   #FFFFFFFF;
+  ac:   #546e7aFF;
+}
+
+* {
+    background:     #1e1e2eff;
+    background-alt: #31324433;
+    foreground:     #cDD6F4ff;
+    selected:       #89B4FAff;
+    active:         #EBA0ACff;
+    urgent:         #F38BA8ff;
+    base: #1e1e2e;
+    mantle: #181825;
+    text: #cdd6f4;
+    red: #f38ba8;
+    green: #a6e3a1;
+}

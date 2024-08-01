@@ -133,6 +133,3 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 - network manager
 - settings manager xfce4
 - i3 lock screen
-
-[Rofi themes](https://github.com/adi1090x/rofi)
-[Polybar themes](https://github.com/adi1090x/polybar-themes)
