@@ -1,19 +1,16 @@
 #!/usr/bin/env bash
 
-# Add this script to your wm startup file.
+# Define the configuration directory
+CONFIG_DIR="$HOME/.config/polybar"
 
-DIR="$HOME/.config/polybar"
-
-# Terminate already running bar instances
+# Terminate already running instances of Polybar
 killall -q polybar
 
-# Wait until the processes have been shut down
-while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
+# Wait until all Polybar processes have been shut down
+while pgrep -u "$UID" -x polybar >/dev/null; do sleep 1; done
 
-# # Launch the bar
-# polybar -q main -c "$DIR"/config.ini &
-
-# Check monitors https://github.com/polybar/polybar/issues/763
-for m in $(polybar --list-monitors | cut -d":" -f1); do
-	MONITOR=$m polybar -q main -c "$DIR"/config.ini &
+# Launch Polybar on all connected monitors
+# This checks for monitors and launches a separate instance of Polybar for each
+for monitor in $(polybar --list-monitors | cut -d":" -f1); do
+    MONITOR="$monitor" polybar -q main -c "$CONFIG_DIR/config.ini" &
 done
