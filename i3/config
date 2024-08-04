@@ -79,12 +79,6 @@ bindsym $mod+7 workspace $ws5
 bindsym $mod+8 workspace $ws5
 bindsym $mod+9 workspace $ws5
 
-# Resize windows
-bindsym Left resize shrink width 10 px or 10 ppt
-bindsym Down resize grow height 10 px or 10 ppt
-bindsym Up resize shrink height 10 px or 10 ppt
-bindsym Right resize grow width 10 px or 10 ppt
-
 # Brightness and volume controls
 bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh brightness_up
 bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh brightness_down
@@ -142,3 +136,28 @@ client.urgent $peach $base $peach $overlay0 $peach
 client.placeholder $overlay0 $base $text $overlay0 $overlay0
 client.background $base
 
+bindcode $mod+27 mode "resize"
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindcode 44 resize shrink width 10 px or 10 ppt
+        bindcode 45 resize grow height 10 px or 10 ppt
+        bindcode 46 resize shrink height 10 px or 10 ppt
+        bindcode 47 resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindcode 113 resize shrink width 10 px or 10 ppt
+        bindcode 116 resize grow height 10 px or 10 ppt
+        bindcode 111 resize shrink height 10 px or 10 ppt
+        bindcode 114 resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindcode 36 mode "default"
+        bindcode 9 mode "default"
+        bindcode $mod+27 mode "default"
+}
