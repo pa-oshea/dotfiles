@@ -79,6 +79,18 @@ bindsym $mod+7 workspace $ws5
 bindsym $mod+8 workspace $ws5
 bindsym $mod+9 workspace $ws5
 
+# move focused container to workspace
+bindsym $mod+Shift+1    move container to workspace  $ws1
+bindsym $mod+Shift+2    move container to workspace  $ws2
+bindsym $mod+Shift+3    move container to workspace  $ws3
+bindsym $mod+Shift+4    move container to workspace  $ws4
+bindsym $mod+Shift+5    move container to workspace  $ws5
+bindsym $mod+Shift+6    move container to workspace  $ws6
+bindsym $mod+Shift+7    move container to workspace  $ws7
+bindsym $mod+Shift+8    move container to workspace  $ws8
+bindsym $mod+Shift+9    move container to workspace  $ws9
+bindsym $mod+Shift+0    move container to workspace  $ws10
+
 # Brightness and volume controls
 bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh brightness_up
 bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh brightness_down
@@ -97,6 +109,8 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec --no-startup-id sleep 1 && feh --bg-scale ~/dev/dotfiles/i3/wallpapers/landscape.jpg
 exec --no-startup-id xset s 480 dpms 600 600 600
+exec --no-startup-id picom --config ~/.config/picom/picom.conf -b
+exec --no-startup-id /bin/caffeine
 exec --no-startup-id /usr/bin/dunst
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
