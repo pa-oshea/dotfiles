@@ -21,6 +21,29 @@ mv fonts/* ~/.local/share/fonts/
 
 ## Install
 
+### Nix package manager
+``` bash
+sh <(curl -L https://nixos.org/nix/install) --no-daemon
+```
+
+```bash
+nix-env -iA nixpkgs.git \
+nixpkgs.zsh \
+nixpkgs.neovim \
+nixpkgs.tmux \
+nixpkgs.jq \
+nixpkgs.delta \
+nixpkgs.ripgrep \
+nixpkgs.fd \
+nixpkgs.eza \
+nixpkgs.tokei \
+nixpkgs.atac \
+nixpkgs.yazi \
+nixpkgs.bat \
+nixpkgs.navi \
+nixpkgs.xsel
+```
+
 ### zsh
 
 ```bash
