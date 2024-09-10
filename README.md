@@ -31,6 +31,9 @@ nix-env -iA nixpkgs.git \
 nixpkgs.zsh \
 nixpkgs.neovim \
 nixpkgs.tmux \
+nixpkgs.lazygit \
+nixpkgs.lazydocker \
+nixpkgs.neofetch \
 nixpkgs.jq \
 nixpkgs.delta \
 nixpkgs.ripgrep \
@@ -40,7 +43,6 @@ nixpkgs.tokei \
 nixpkgs.atac \
 nixpkgs.yazi \
 nixpkgs.bat \
-nixpkgs.navi \
 nixpkgs.xsel
 ```
 
