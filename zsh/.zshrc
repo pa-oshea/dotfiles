@@ -161,8 +161,6 @@ export FZF_DEFAULT_OPTS="\
 
 alias lg="lazygit"
 alias ld="lazydocker"
-
-
-export PATH=$HOME/.local/bin:$PATH
+alias q="exit"
 
 eval "$(zoxide init --cmd cd zsh)"
