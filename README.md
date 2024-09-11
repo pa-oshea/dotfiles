@@ -21,6 +21,13 @@ mv fonts/* ~/.local/share/fonts/
 
 ## Install
 
+### Install build-essentials and glib
+``` bash
+sudo apt update
+sudo apt install build-essential
+sudo apt install libc6-dev
+```
+
 ### Nix package manager
 ``` bash
 sh <(curl -L https://nixos.org/nix/install) --no-daemon
@@ -31,6 +38,7 @@ nix-env -iA nixpkgs.git \
 nixpkgs.zsh \
 nixpkgs.neovim \
 nixpkgs.tmux \
+nixpkgs.fzf \
 nixpkgs.lazygit \
 nixpkgs.lazydocker \
 nixpkgs.neofetch \
@@ -44,6 +52,23 @@ nixpkgs.atac \
 nixpkgs.yazi \
 nixpkgs.bat \
 nixpkgs.xsel
+```
+
+### Install oh-my-zsh
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+```bash fzf-tab
+git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
+```
+``` bash zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+```
+```bash zsh-completions
+git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions
+```
+```bash zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 ```
 
 ### zsh
