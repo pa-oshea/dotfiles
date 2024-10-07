@@ -17,12 +17,11 @@ export STARSHIP_CONFIG=$HOME/.config/zsh/starship.toml
 
 # Set up language-specific package managers
 export CARGO_HOME="$XDB_DATA_HOME/cargo"
-export GOPATH="$XDB_DATA_HOME/go"
 
 # Modify PATH
 path=(
     "$HOME/.local/bin"
-    "$GOPATH/bin"
+    "/usr/local/go/bin"
     "$CARGO_HOME/bin"
     $path
 )
