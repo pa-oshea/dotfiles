@@ -6,7 +6,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
+git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
 chmod +x scripts/*.sh
@@ -15,32 +15,22 @@ chmod +x scripts/*.sh
 ./scripts/quick-setup.sh
 
 # Or manual setup
-./scripts/install-nix.sh
-./scripts/install.sh dev --languages rust node python go java
+./install-nix.sh
+./install.sh --languages rust node python go java
 ```
 
-## 🎯 Installation Profiles
+## 🎯 Installation
 
-### Minimal Profile
+### Core
 
-```bash
-./install.sh minimal
+``` bash
+./install.sh
 ```
-
-Essential CLI tools only
-
-### Development Profile
-
-```bash
-./install.sh dev
-```
-
-CLI tools + development environment
 
 ### With Languages
 
 ```bash
-./install.sh dev --languages rust node python go java
+./install.sh --languages rust node python go java
 ```
 
 Development profile + language-specific tooling
@@ -87,13 +77,6 @@ sdk use java 21.0.1-tem
 ```
 
 ### Override Settings
-
-Create local overrides:
-
-```bash
-# ~/.dotfiles/config/zsh/.zshrc.local
-# Your local customizations here
-```
 
 ## 📚 Quick Commands
 

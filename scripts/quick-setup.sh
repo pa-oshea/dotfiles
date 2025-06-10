@@ -42,9 +42,9 @@ main() {
     # Run main installation
     log_info "⚙️  Installing dotfiles..."
     if is_first_run; then
-        ./scripts/install.sh --backup dev --languages rust node python go java
+        ./install.sh --backup --languages rust node python go java
     else
-        ./scripts/install.sh dev --languages rust node python go java
+        ./install.sh --languages rust node python go java
     fi
 
     log_success "✅ Setup complete!"
