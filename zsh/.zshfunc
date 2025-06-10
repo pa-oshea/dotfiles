@@ -1,238 +1,432 @@
-## ----------------
-## Custom functions
-## ----------------
-# fe [FUZZY PATTERN] - Open the selected file with the default editor
-#   - Bypass fuzzy finder if there's only one match (--select-1)
-#   - Exit if there's no match (--exit-0)
+# =============================================================================
+# ZSH CUSTOM FUNCTIONS
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# File Operations & Navigation
+# -----------------------------------------------------------------------------
+
+# fe [FUZZY PATTERN] - Open selected file(s) with default editor
+# Supports multi-select and preview with bat
 function fe() {
-  IFS=$'\n' files=($(fzf --query="$1" --multi --select-1 --prompt 'files:' --preview 'bat --color=always {}' --preview-window '~3' --exit-0))
-  [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+    local files
+    IFS=$'\n' files=($(fzf \
+        --query="$1" \
+        --multi \
+        --select-1 \
+        --exit-0 \
+        --prompt='files: ' \
+        --preview='bat --color=always --style=header,grid --line-range :300 {}' \
+        --preview-window='~3'
+    ))
+    [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
 }
 
-# search alias
-function al() {
-    alias | fzf | sed "s/^[^=]*=//" | tr -d "'" | zsh
-}
-
-
-# fs [FUZZY PATTERN] - Select selected tmux session
-#   - Bypass fuzzy finder if there's only one match (--select-1)
-#   - Exit if there's no match (--exit-0)
-function fs() {
-  local session
-  session=$(tmux list-sessions -F "#{session_name}" | \
-    fzf --query="$1" --select-1 --exit-0) &&
-  tmux switch-client -t "$session"
-}
-
-# Install packages using yay (change to pacman/AUR helper of your choice)
-function in() {
-    yay -Slq | fzf -q "$1" -m --preview 'yay -Si {1}'| xargs -ro yay -S
-}
-# Remove installed packages (change to pacman/AUR helper of your choice)
-function re() {
-    yay -Qq | fzf -q "$1" -m --preview 'yay -Qi {1}' | xargs -ro yay -Rns
-}
-
-
-# list env variables
-function list_env() {
-	local var
-	var=$(printenv | cut -d= -f1 | fzf --prompt 'env:' --preview='printenv {}') \
-		&& echo "$var=$(printenv "$var")" \
-		&& unset var
-}
-
-
-# list go env variables
-function list_goenv() {
-	local var
-	var=$(go env | cut -d= -f1 | fzf --prompt 'env:' --preview='go env {}') \
-		&& echo "$var=$(go env "$var")" \
-		&& unset var
-}
-
-
-# search regex in current directory
-function search() {
-	local regex=$(gum input --prompt="find regex: " --placeholder="find pattern...")
-	if [[ -z "$regex" ]]; then
-		return
-	fi
-
-	local matching_files
-	case $1 in
-		-h)
-			matching_files=$(rg -l --hidden ${regex} | fzf --exit-0 --preview="rg --color=always -n '${regex}' {} ")
-			;;
-		-i)
-			matching_files=$(rg -i -l --hidden ${regex} | fzf --exit-0 --preview="rg -i --color=always -n '${regex}' {} ")
-			;;
-		*)
-			matching_files=$(rg -l -- ${regex} | fzf --exit-0 --preview="rg --color=always -n -- '${regex}' {} ")
-			;;
-	esac
-	[[ -n "$matching_files" ]] && ${EDITOR} "${matching_files}" -c/${regex}
-}
-
-
-# replace
-function replace() {
-	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
-
-	local find_regex=$(gum input --prompt="find regex: " --placeholder="find pattern...")
-	if [[ -z "$find_regex" ]]; then
-		return
-	fi
-	local matching_files=$(rg -l --count-matches $find_regex | column -s: -t)
-
-	if [[ -n "$matching_files" ]]; then
-		gum style --border rounded --foreground "#d33682" --border-foreground "#2aa198" --margin "1 1" --padding "1 1" $matching_files
-	else
-		echo "no matching files"
-		return
-	fi
-
-	local replace_regex=$(gum input --prompt="replace regex: " --placeholder="replace pattern...")
-	if [[ ! -z "$replace_regex" ]]; then
-		gum confirm "replace $find_regex with $replace_regex ?" && \
-		echo $matching_files | \
-		cut -f1 -d' ' | \
-		xargs -n 1 -I {} -t sed -i '' "s/$find_regex/$replace_regex/g" {}
-	else
-		return
-	fi
-}
-
-
-# paginate help
-function help() { "$@" --help | bat -l man -p ; }
-
-
-# preview files
+# preview_files - Intelligent file preview with different handlers
 function preview_files() {
-	local selection
-	if [[ -z "$1" ]]; then
-		selection="$(fd -u -t f -E '.git/' | fzf)" && preview_files "$selection"
-		return 0
-	fi
+    local selection
+    
+    # If no argument, use fzf to select
+    if [[ -z "$1" ]]; then
+        selection="$(fd -u -t f -E '.git/' | fzf)" && preview_files "$selection"
+        return 0
+    fi
 
-	case $1 in
-		-e)
-			shift
-			selection="$(fd -u -t f -E '.git/' -e $1 | fzf --multi --select-1 --exit-0 | tr '\n' ' ')"
-			[[ -n "$selection" ]] && preview_files "${(z)selection}"
-			shift
-			;;
-		-t)
-			bat --style='grid' ~/.todo;;
-		-E)
-			bat --style='header,grid' .env 2>/dev/null ;;
-		*.md)
-			glow -s ~/.config/glowconfig/customglow.json -p $@;;
-		*.json)
-			jq '.' -C $1 | less -R;;
-		*.csv)
-			vd "$@";;
-		*.pdf)
-			zathura $1;;
-		*)
-			if [[ -f $1 ]]; then
-				bat --style='header,grid' $1
-			else
-				which $1 | bat -l sh --style 'grid'
-			fi
-	esac
+    case $1 in
+        -e)
+            shift
+            selection="$(fd -u -t f -E '.git/' -e $1 | fzf --multi --select-1 --exit-0 | tr '\n' ' ')"
+            [[ -n "$selection" ]] && preview_files "${(z)selection}"
+            ;;
+        -t)
+            bat --style='grid' ~/.todo 2>/dev/null || echo "No todo file found"
+            ;;
+        -E)
+            bat --style='header,grid' .env 2>/dev/null || echo "No .env file found"
+            ;;
+        *.md)
+            if command -v glow >/dev/null 2>&1; then
+                glow -s ~/.config/glowconfig/customglow.json -p "$@"
+            else
+                bat --style='header,grid' "$1"
+            fi
+            ;;
+        *.json)
+            jq '.' -C "$1" | less -R
+            ;;
+        *.csv)
+            if command -v vd >/dev/null 2>&1; then
+                vd "$@"
+            else
+                column -t -s ',' "$1" | less -S
+            fi
+            ;;
+        *.pdf)
+            if command -v zathura >/dev/null 2>&1; then
+                zathura "$1" &
+            else
+                echo "PDF viewer not found"
+            fi
+            ;;
+        *)
+            if [[ -f "$1" ]]; then
+                bat --style='header,grid' "$1"
+            else
+                which "$1" 2>/dev/null | bat -l sh --style 'grid' || echo "File or command not found: $1"
+            fi
+            ;;
+    esac
 }
 
+# -----------------------------------------------------------------------------
+# System & Process Management
+# -----------------------------------------------------------------------------
 
-# quick commit all
-function quick_commit(){
-	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
-
-	TEXT="#268bd2"
-	BORDER="#2aa198"
-	local unstaged_list="$(git status -s)"
-	if [[ -z "$unstaged_list" ]]; then
-		echo "no files to commit"
-		return
-	fi
-
-	echo '\n{{ Color "'${BORDER}'" "" " on branch :"}} {{ Color "'${TEXT}'" "" "'$(git rev-parse --abbrev-ref HEAD)'" }}' | gum format -t template
-	gum style \
-		--border rounded \
-		--foreground "$TEXT" \
-		--border-foreground  "$BORDER" \
-		--margin "1 1" \
-		--padding "1 1" \
-		$unstaged_list
-
-	local message=$(gum input --prompt="commit: " --placeholder="commit message...")
-
-	if [[ -z "$message" ]]; then
-		echo "commit aborted"
-		return
-	fi
-
-	gum confirm "add files and commit?" && \
-	git add . && git commit -m "$message" && \
-	REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name @{u})"
-	[[ ! "$(git ls-remote --exit-code --heads origin $(git rev-parse --abbrev-ref HEAD))" ]] && { echo "no remote branch set"; return; }
-	gum confirm "push to $REMOTE?" && gum spin --spinner dot --title "git push..." --show-output git push || echo "changes not pushed"
+# al - Search and execute aliases interactively
+function al() {
+    local selected
+    selected=$(alias | fzf --prompt='aliases: ' | sed "s/^[^=]*=//" | tr -d "'")
+    [[ -n "$selected" ]] && eval "$selected"
 }
 
-
-# json_diff
-function json_diff() {
-	if [[ $# -eq 2 ]]; then
-		delta =(jq -S . $1) =(jq -S . $2)
-	else
-		echo "expected two arguments"
-	fi
+# list_env - Browse environment variables interactively
+function list_env() {
+    local var
+    var=$(printenv | cut -d= -f1 | fzf --prompt='env: ' --preview='printenv {}') \
+        && echo "$var=$(printenv "$var")"
 }
 
-
-# curl weather
-function weather() {
-	local location
-	[[ $# -eq 0 ]] && location="Cork" || location=$1
-	curl wttr.in/${location}\?F
+# list_goenv - Browse Go environment variables
+function list_goenv() {
+    if ! command -v go >/dev/null 2>&1; then
+        echo "Go is not installed"
+        return 1
+    fi
+    
+    local var
+    var=$(go env | cut -d= -f1 | fzf --prompt='go env: ' --preview='go env {}') \
+        && echo "$var=$(go env "$var")"
 }
 
+# help - Paginate help output with bat
+function help() {
+    if [[ $# -eq 0 ]]; then
+        echo "Usage: help <command>"
+        return 1
+    fi
+    "$@" --help 2>/dev/null | bat -l man -p || "$@" -h 2>/dev/null | bat -l man -p
+}
 
-# open PRs in nvim diffview
+# -----------------------------------------------------------------------------
+# Tmux Integration
+# -----------------------------------------------------------------------------
+
+# fs [FUZZY PATTERN] - Switch tmux sessions interactively
+function fs() {
+    if ! command -v tmux >/dev/null 2>&1; then
+        echo "tmux is not installed"
+        return 1
+    fi
+    
+    local session
+    session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | \
+        fzf --query="$1" --select-1 --exit-0 --prompt='tmux sessions: ')
+    
+    if [[ -n "$session" ]]; then
+        if [[ -n "$TMUX" ]]; then
+            tmux switch-client -t "$session"
+        else
+            tmux attach-session -t "$session"
+        fi
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# Package Management (Arch Linux)
+# -----------------------------------------------------------------------------
+
+# in - Install packages using yay with preview
+function in() {
+    if ! command -v yay >/dev/null 2>&1; then
+        echo "yay is not installed"
+        return 1
+    fi
+    
+    yay -Slq | fzf \
+        -q "$1" \
+        -m \
+        --preview 'yay -Si {1}' \
+        --preview-window=right:60%:wrap \
+        | xargs -ro yay -S
+}
+
+# re - Remove packages using yay with preview
+function re() {
+    if ! command -v yay >/dev/null 2>&1; then
+        echo "yay is not installed"
+        return 1
+    fi
+    
+    yay -Qq | fzf \
+        -q "$1" \
+        -m \
+        --preview 'yay -Qi {1}' \
+        --preview-window=right:60%:wrap \
+        | xargs -ro yay -Rns
+}
+
+# -----------------------------------------------------------------------------
+# Text Search & Replace
+# -----------------------------------------------------------------------------
+
+# search - Search for regex patterns in current directory with preview
+function search() {
+    if ! command -v rg >/dev/null 2>&1; then
+        echo "ripgrep (rg) is not installed"
+        return 1
+    fi
+    
+    if ! command -v gum >/dev/null 2>&1; then
+        echo "gum is not installed"
+        return 1
+    fi
+    
+    local regex
+    regex=$(gum input --prompt="find regex: " --placeholder="find pattern...")
+    [[ -z "$regex" ]] && return
+    
+    local matching_files
+    case $1 in
+        -h)
+            matching_files=$(rg -l --hidden "$regex" | fzf --exit-0 --preview="rg --color=always -n '$regex' {}")
+            ;;
+        -i)
+            matching_files=$(rg -i -l --hidden "$regex" | fzf --exit-0 --preview="rg -i --color=always -n '$regex' {}")
+            ;;
+        *)
+            matching_files=$(rg -l -- "$regex" | fzf --exit-0 --preview="rg --color=always -n -- '$regex' {}")
+            ;;
+    esac
+    
+    [[ -n "$matching_files" ]] && ${EDITOR} "$matching_files" -c/"$regex"
+}
+
+# replace - Interactive find and replace in git repository
+function replace() {
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "Not a git repository"
+        return 1
+    fi
+    
+    if ! command -v gum >/dev/null 2>&1; then
+        echo "gum is not installed"
+        return 1
+    fi
+    
+    local find_regex
+    find_regex=$(gum input --prompt="find regex: " --placeholder="find pattern...")
+    [[ -z "$find_regex" ]] && return
+    
+    local matching_files
+    matching_files=$(rg -l --count-matches "$find_regex" | column -s: -t)
+    
+    if [[ -n "$matching_files" ]]; then
+        gum style \
+            --border rounded \
+            --foreground "#d33682" \
+            --border-foreground "#2aa198" \
+            --margin "1 1" \
+            --padding "1 1" \
+            "$matching_files"
+    else
+        echo "No matching files found"
+        return
+    fi
+    
+    local replace_regex
+    replace_regex=$(gum input --prompt="replace regex: " --placeholder="replace pattern...")
+    [[ -z "$replace_regex" ]] && return
+    
+    if gum confirm "replace '$find_regex' with '$replace_regex'?"; then
+        echo "$matching_files" | \
+        cut -f1 -d' ' | \
+        xargs -n 1 -I {} -t sed -i "s/$find_regex/$replace_regex/g" {}
+    fi
+}
+
+# GR - Grep with delta highlighting
+function GR() {
+    if ! command -v rg >/dev/null 2>&1 || ! command -v delta >/dev/null 2>&1; then
+        echo "ripgrep and delta are required"
+        return 1
+    fi
+    rg "$@" --json | delta --tabs=1
+}
+
+# -----------------------------------------------------------------------------
+# Git Operations
+# -----------------------------------------------------------------------------
+
+# quick_commit - Interactive git workflow with staging and optional push
+function quick_commit() {
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "Not a git repository"
+        return 1
+    fi
+    
+    if ! command -v gum >/dev/null 2>&1; then
+        echo "gum is not installed"
+        return 1
+    fi
+    
+    local TEXT="#268bd2"
+    local BORDER="#2aa198"
+    local unstaged_list
+    unstaged_list="$(git status -s)"
+    
+    if [[ -z "$unstaged_list" ]]; then
+        echo "No files to commit"
+        return
+    fi
+    
+    echo '\n{{ Color "'${BORDER}'" "" " on branch :"}} {{ Color "'${TEXT}'" "" "'$(git rev-parse --abbrev-ref HEAD)'" }}' | gum format -t template
+    gum style \
+        --border rounded \
+        --foreground "$TEXT" \
+        --border-foreground "$BORDER" \
+        --margin "1 1" \
+        --padding "1 1" \
+        "$unstaged_list"
+    
+    local message
+    message=$(gum input --prompt="commit: " --placeholder="commit message...")
+    [[ -z "$message" ]] && { echo "Commit aborted"; return; }
+    
+    if gum confirm "add files and commit?"; then
+        git add . && git commit -m "$message"
+        
+        # Check if remote branch exists
+        if git ls-remote --exit-code --heads origin "$(git rev-parse --abbrev-ref HEAD)" >/dev/null 2>&1; then
+            local remote
+            remote="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)"
+            if [[ -n "$remote" ]] && gum confirm "push to $remote?"; then
+                gum spin --spinner dot --title "git push..." --show-output git push || echo "Push failed"
+            fi
+        else
+            echo "No remote branch set"
+        fi
+    else
+        echo "Commit cancelled"
+    fi
+}
+
+# nvim_diff - Open git diff in neovim with DiffviewOpen
 function nvim_diff() {
-	[[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]] && { echo "not a git repo"; return; }
-
-	local branches="$(git branch -a --format='%(refname:short)' | grep -v 'HEAD' |
-		fzf -d' ' \
-		--prompt="branches:" \
-		--preview="git log --oneline --format='%C(bold blue)%h%C(reset) - %C(green)%ar%C(reset) - %C(cyan)%an%C(reset)%C(bold yellow)%d%C(reset): %s' --color=always {}" \
-		--header=$'\n' \
-		--no-info
-	)"
-
-	if [[ -n "$branches" ]]; then
-		nvim "+DiffviewOpen $branches" +tabonly
-	fi
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "Not a git repository"
+        return 1
+    fi
+    
+    if ! command -v nvim >/dev/null 2>&1; then
+        echo "neovim is not installed"
+        return 1
+    fi
+    
+    local branches
+    branches="$(git branch -a --format='%(refname:short)' | grep -v 'HEAD' | \
+        fzf -d' ' \
+            --prompt="branches: " \
+            --preview="git log --oneline --format='%C(bold blue)%h%C(reset) - %C(green)%ar%C(reset) - %C(cyan)%an%C(reset)%C(bold yellow)%d%C(reset): %s' --color=always {}" \
+            --header=$'\n' \
+            --no-info
+    )"
+    
+    [[ -n "$branches" ]] && nvim "+DiffviewOpen $branches" +tabonly
 }
 
+# -----------------------------------------------------------------------------
+# Utility Functions
+# -----------------------------------------------------------------------------
 
-# grep highlight with delta
-function GR() { rg "$@" --json | delta --tabs=1; }
+# json_diff - Compare two JSON files with proper formatting
+function json_diff() {
+    if [[ $# -ne 2 ]]; then
+        echo "Usage: json_diff <file1.json> <file2.json>"
+        return 1
+    fi
+    
+    if ! command -v jq >/dev/null 2>&1; then
+        echo "jq is required for JSON formatting"
+        return 1
+    fi
+    
+    if ! command -v delta >/dev/null 2>&1; then
+        echo "delta is required for better diff output"
+        diff <(jq -S . "$1") <(jq -S . "$2")
+    else
+        delta <(jq -S . "$1") <(jq -S . "$2")
+    fi
+}
 
+# weather - Get weather information for a location
+function weather() {
+    local location="${1:-Cork}"
+    if command -v curl >/dev/null 2>&1; then
+        curl -s "wttr.in/${location}?F" || echo "Weather service unavailable"
+    else
+        echo "curl is required for weather information"
+    fi
+}
 
-# visualise todo file
+# todo - Simple todo file management
 function todo() {
-	local TODOFILE="${HOME}/.todo"
-	if [[ -z "$1" ]]; then
-		${EDITOR} ${TODOFILE}
-	fi
+    local TODOFILE="${HOME}/.todo"
+    
+    case $1 in
+        -v)
+            if [[ -f "$TODOFILE" ]]; then
+                bat --style='grid' "$TODOFILE"
+            else
+                echo "No todo file found. Create one with: todo"
+            fi
+            ;;
+        -d)
+            if [[ -f "$TODOFILE" ]]; then
+                truncate -s 0 "$TODOFILE"
+                echo "Todo file cleared"
+            else
+                echo "No todo file to clear"
+            fi
+            ;;
+        *)
+            ${EDITOR} "$TODOFILE"
+            ;;
+    esac
+}
 
-	case $1 in
-		-v)
-			bat --style='grid' ${TODOFILE};;
-		-d)
-			truncate -s 0 ${TODOFILE};;
-	esac
+# take - Create directory and change into it
+function take() {
+    if [[ $# -ne 1 ]]; then
+        echo "Usage: take <directory>"
+        return 1
+    fi
+    mkdir -p "$1" && cd "$1"
+}
+
+# backup - Create timestamped backup of file
+function backup() {
+    if [[ $# -ne 1 ]]; then
+        echo "Usage: backup <file>"
+        return 1
+    fi
+    
+    local file="$1"
+    if [[ -f "$file" ]]; then
+        local backup_name="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+        cp "$file" "$backup_name"
+        echo "Backup created: $backup_name"
+    else
+        echo "File not found: $file"
+        return 1
+    fi
 }

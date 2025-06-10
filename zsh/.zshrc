@@ -1,166 +1,209 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+# =============================================================================
+# ZSH INTERACTIVE CONFIGURATION
+# =============================================================================
 
-# Path to your Oh My Zsh installation.
+# -----------------------------------------------------------------------------
+# Oh My Zsh Configuration
+# -----------------------------------------------------------------------------
 export ZSH="$HOME/.oh-my-zsh"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# Theme (empty because we use Starship)
 ZSH_THEME=""
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+# Update behavior
+zstyle ':omz:update' mode reminder
+zstyle ':omz:update' frequency 7
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-
-# Uncomment the following line to change how often to auto-update (in days).
-# zstyle ':omz:update' frequency 13
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
+# Plugin configuration
 plugins=(
-	alias-finder
-	aliases 
-	command-not-found
-	docker 
-	docker-compose 
-	dotenv 
-	eza 
-	fzf 
-	fzf-tab 
-	git 
-	golang 
-	mvn 
-	npm 
-	nvm 
-	rust 
-	sdk 
-	spring 
-	starship
-	sudo 
-	tmux 
-	zsh-autosuggestions
-	zsh-syntax-highlighting
+    # Core development
+    git
+    docker
+    docker-compose
+    
+    # Language support
+    golang
+    mvn
+    npm
+    nvm
+    rust
+    spring
+    sdk
+    
+    # Enhanced shell experience
+    fzf
+    fzf-tab
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    
+    # Utilities
+    alias-finder
+    command-not-found
+    dotenv
+    eza
+    sudo
+    tmux
 )
 
+# Add completions to fpath before Oh My Zsh loads
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
+# Optimize completion dump location
+export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
+
+# Load Oh My Zsh
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
+# -----------------------------------------------------------------------------
+# Completion System Optimization
+# -----------------------------------------------------------------------------
+# Load completions efficiently
+autoload -Uz compinit
 
-# export MANPATH="/usr/local/man:$MANPATH"
+# Only regenerate compdump once per day
+for dump in ~/.zcompdump(N.mh+24); do
+    compinit
+done
+compinit -C
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+# -----------------------------------------------------------------------------
+# Zsh Options
+# -----------------------------------------------------------------------------
+# History options
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
+# Directory options
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
+
+# Completion options
+setopt COMPLETE_IN_WORD
+setopt ALWAYS_TO_END
+setopt AUTO_MENU
+setopt AUTO_LIST
+setopt AUTO_PARAM_SLASH
+
+# Other useful options
+setopt CORRECT
+setopt INTERACTIVE_COMMENTS
+setopt MULTIOS
+setopt NO_BEEP
+
+# -----------------------------------------------------------------------------
+# Plugin Configuration
+# -----------------------------------------------------------------------------
+
+# Alias-finder configuration
+zstyle ':omz:plugins:alias-finder' autoload yes
+zstyle ':omz:plugins:alias-finder' longer yes
+zstyle ':omz:plugins:alias-finder' exact yes
+zstyle ':omz:plugins:alias-finder' cheaper yes
+
+# Completion styling
+zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' menu no
+
+# FZF-tab configuration
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:*' switch-group '<' '>'
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+
+# -----------------------------------------------------------------------------
+# FZF Configuration
+# -----------------------------------------------------------------------------
+export FZF_DEFAULT_OPTS="\
+    --reverse \
+    --border \
+    --no-scrollbar \
+    --height=90% \
+    --padding=1 \
+    --preview-window=right:50%:wrap \
+    --bind shift-up:preview-up,shift-down:preview-down \
+    --bind '?:toggle-preview' \
+    --bind 'ctrl-y:execute-silent(echo {} | pbcopy)' \
+    --bind 'ctrl-e:execute(echo {} | xargs -o \$EDITOR)' \
+    --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+    --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+    --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
+    --pointer='▶' \
+    --marker=''"
+
+# FZF key bindings (if not loaded by plugin)
+if [[ ! "$plugins" =~ "fzf" ]]; then
+    source <(fzf --zsh) 2>/dev/null
 fi
 
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
+# -----------------------------------------------------------------------------
+# Aliases
+# -----------------------------------------------------------------------------
 
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-zstyle ':omz:plugins:alias-finder' autoload yes # disabled by default
-zstyle ':omz:plugins:alias-finder' longer yes # disabled by default
-zstyle ':omz:plugins:alias-finder' exact yes # disabled by default
-zstyle ':omz:plugins:alias-finder' cheaper yes # disabled by default
-# disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# set descriptions format to enable group support
-# NOTE: don't use escape sequences here, fzf-tab will ignore them
-zstyle ':completion:*:descriptions' format '[%d]'
-# set list-colors to enable filename colorizing
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
-zstyle ':completion:*' menu no
-# preview directory's content with eza when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-# switch group using `<` and `>`
-zstyle ':fzf-tab:*' switch-group '<' '>'
-
-export FZF_DEFAULT_OPTS="\
-	--reverse \
-	--border \
-	-e \
-	--no-scrollbar \
-	--height=90% \
-	--padding=1 \
-	--preview-window=right:50%:wrap \
-	--bind shift-up:preview-up,shift-down:preview-down --bind ?:toggle-preview \
-	--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
-	--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
-	--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
-	--pointer ▶ --marker "
-
+# Quick shortcuts
 alias lg="lazygit"
 alias ld="lazydocker"
 alias q="exit"
 
+# Enhanced utilities
+alias fh='history | fzf --tac --no-sort | sed "s/ *[0-9]* *//" | tr -d "\n" | pbcopy'
+alias fd='cd $(find * -type d | fzf)'
+alias fkill='ps -ef | fzf | awk "{print \$2}" | xargs kill -9'
+
+# Directory navigation
+alias dev="cd $DEV_HOME"
+alias work="cd $WORK_HOME"
+alias dots="cd $XDG_CONFIG_HOME"
+
+# Config editing
+alias zshconfig="$EDITOR $ZDOTDIR/.zshrc"
+alias zshenv="$EDITOR ~/.zshenv"
+alias starconfig="$EDITOR $STARSHIP_CONFIG"
+
+# Git shortcuts
+alias gs="git status -sb"
+alias ga="git add"
+alias gc="git commit"
+alias gp="git push"
+alias gl="git log --oneline --decorate --graph"
+alias gd="git diff"
+alias gb="git branch"
+alias gco="git checkout"
+alias gcb="git checkout -b"
+
+# System utilities
+alias ll="eza -la --git --icons --group-directories-first"
+alias la="eza -la --git --icons --group-directories-first"
+alias ls="eza --icons --group-directories-first"
+alias lt="eza -T --git --icons --level=2"
+
+# System monitoring
+alias df="df -h"
+alias du="du -sh"
+alias ports="ss -tuln"
+alias listening="ss -tlnp"
+
+# -----------------------------------------------------------------------------
+# Tool Initialization
+# -----------------------------------------------------------------------------
+
+# Initialize Starship prompt
+eval "$(starship init zsh)"
+
+# Initialize zoxide (smart cd)
 eval "$(zoxide init --cmd cd zsh)"
+
+# Load custom functions
+[[ -f "$ZDOTDIR/.zshfunc" ]] && source "$ZDOTDIR/.zshfunc"
+
+# Load local configuration if it exists
+[[ -f "$ZDOTDIR/.zshrc.local" ]] && source "$ZDOTDIR/.zshrc.local"
