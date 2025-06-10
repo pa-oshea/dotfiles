@@ -3,18 +3,30 @@
 
 [core]
     pager = delta
+    editor = nvim
+    autocrlf = input
+    ignorecase = false
+
+[init]
+    defaultBranch = main
 
 [pager]
     blame = delta
+    diff = delta
+    log = delta
+    reflog = delta
+    show = delta
 
 [interactive]
     diffFilter = delta --color-only --features=interactive
 
 [delta]
     features = decorations
-    navigate = true # use n and N to move between diff sections
+    navigate = true              # use n and N to move between diff sections
     line-numbers = true
     hyperlinks = true
+    side-by-side = true
+    syntax-theme = Catppuccin-mocha
 
 [delta "interactive"]
     keep-plus-minus-markers = false
@@ -30,6 +42,165 @@
 
 [merge]
     conflictstyle = diff3
+    tool = nvim
+
+[mergetool "nvim"]
+    cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 
 [diff]
     colorMoved = default
+    algorithm = histogram
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+    followTags = true
+    autoSetupRemote = true
+
+[rebase]
+    autoStash = true
+    autoSquash = true
+
+[fetch]
+    prune = true
+    prunetags = true
+
+[status]
+    showUntrackedFiles = all
+
+[log]
+    date = relative
+
+[format]
+    pretty = format:%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+# Aliases
+[alias]
+    # Basic shortcuts
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    
+    # Enhanced shortcuts
+    s = status -sb
+    a = add
+    aa = add --all
+    cm = commit -m
+    cam = commit -am
+    
+    # Branching
+    cob = checkout -b
+    bd = branch -d
+    bD = branch -D
+    
+    # Logging
+    l = log --oneline
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    ll = log --stat
+    lp = log --patch
+    
+    # Diffs
+    d = diff
+    dc = diff --cached
+    ds = diff --staged
+    
+    # Remote operations
+    f = fetch
+    fa = fetch --all
+    p = push
+    pl = pull
+    pom = push origin main
+    pod = push origin dev
+    
+    # Stashing
+    ss = stash save
+    sp = stash pop
+    sl = stash list
+    
+    # Undoing things
+    unstage = reset HEAD --
+    undo = reset --soft HEAD~1
+    amend = commit --amend --no-edit
+    
+    # Information
+    who = blame
+    tags = tag -l
+    branches = branch -a
+    remotes = remote -v
+    
+    # Cleanup
+    cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master\\|dev\\|develop' | xargs -n 1 git branch -d"
+    
+    # Advanced
+    absorb = absorb --and-rebase
+    fixup = commit --fixup
+    squash = commit --squash
+    
+    # Working with GitHub
+    pr = "!gh pr create"
+    prs = "!gh pr list"
+    
+    # File operations
+    ls = ls-files
+    ignored = ls-files --others --ignored --exclude-standard
+    
+    # Searching
+    grep = grep -Ii
+    find = "!git ls-files | grep -i"
+    
+    # Configuration
+    aliases = config --get-regexp alias
+    
+    # Quick commit with message
+    quick = "!f() { git add -A && git commit -m \"$1\"; }; f"
+
+[help]
+    autocorrect = 1
+
+[rerere]
+    enabled = true
+
+[branch]
+    autosetupmerge = true
+    autosetuprebase = always
+
+[credential]
+    helper = cache --timeout=3600
+
+# GitHub CLI integration
+[gh]
+    protocol = https
+
+# Git LFS (Large File Storage)
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+
+# URL rewrites for better performance
+[url "https://github.com/"]
+    insteadOf = gh:
+    insteadOf = github:
