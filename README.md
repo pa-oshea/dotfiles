@@ -127,158 +127,168 @@ rm -rf ~/.oh-my-zsh/custom/plugins/*
 
 ---
 
-# Old README
+## 🔨 Manual Installation Reference
 
-## Linking
+### Configuration Linking
 
+```bash
+# Link configuration directories
+ln -sf ~/.dotfiles/dunst ~/.config/
+ln -sf ~/.dotfiles/i3 ~/.config/
+ln -sf ~/.dotfiles/kitty ~/.config/
+ln -sf ~/.dotfiles/picom ~/.config/
+ln -sf ~/.dotfiles/polybar ~/.config/
+ln -sf ~/.dotfiles/rofi ~/.config/
+ln -sf ~/.dotfiles/zsh ~/.config/
+ln -sf ~/.dotfiles/tmux ~/.config/
+
+# Link dotfiles
+ln -sf ~/.dotfiles/.zshenv ~/
+ln -sf ~/.dotfiles/.gitconfig ~/
+
+# Install scripts
+ln -sf ~/.dotfiles/scripts/tmux-sessionizer.sh ~/.local/bin/tmux-sessionizer
+
+# Install fonts
+mkdir -p ~/.local/share/fonts
+cp ~/.dotfiles/fonts/* ~/.local/share/fonts/
+fc-cache -fv
 ```
-ln -s -r dunst ~/.config &
-ln -s -r i3 ~/.config &
-ln -s -r kitty ~/.config &
-ln -s -r picom ~/.config &
-ln -s -r polybar ~/.config &
-ln -s -r rofi ~/.config &
-ln -s -r zsh ~/.config &
-ln -s -r .zshenv ~ &
-ln -s -r .gitconfig ~ &
-ln -s -r .tmux.conf ~ &
-ln -s -r scripts/tmux-sessionizer.sh ~/.local/bin/ &
-mv fonts/* ~/.local/share/fonts/
-```
 
-## Install
+### Core Tools Installation
 
-### Nix package manager
+#### Nix Package Manager
 
-``` bash
+```bash
+# Install Nix (single-user)
 sh <(curl -L https://nixos.org/nix/install) --no-daemon
+
+# Install essential packages
+# Check core.nix for missing packages
+nix-env -iA \
+  nixpkgs.git \
+  nixpkgs.zsh \
+  nixpkgs.neovim \
+  nixpkgs.tmux \
+  nixpkgs.fzf \
+  nixpkgs.lazygit \
+  nixpkgs.ast-grep \
+  nixpkgs.lazydocker \
+  nixpkgs.neofetch \
+  nixpkgs.jq \
+  nixpkgs.delta \
+  nixpkgs.ripgrep \
+  nixpkgs.fd \
+  nixpkgs.eza \
+  nixpkgs.tokei \
+  nixpkgs.atac \
+  nixpkgs.yazi \
+  nixpkgs.bat \
+  nixpkgs.xsel \
+  nixpkgs.lsd \
+  nixpkgs.tldr
 ```
 
-```bash
-nix-env -iA nixpkgs.git \
-nixpkgs.zsh \
-nixpkgs.neovim \
-nixpkgs.tmux \
-nixpkgs.fzf \
-nixpkgs.lazygit \
-nixpkgs.ast-grep \
-nixpkgs.lazydocker \
-nixpkgs.neofetch \
-nixpkgs.jq \
-nixpkgs.delta \
-nixpkgs.ripgrep \
-nixpkgs.fd \
-nixpkgs.eza \
-nixpkgs.tokei \
-nixpkgs.atac \
-nixpkgs.yazi \
-nixpkgs.bat \
-nixpkgs.xsel \
-nixpkgs.lsd \
-nixpkgs.tldr 
-```
-
-### Install oh-my-zsh
+#### Shell Setup
 
 ```bash
+# Install Oh My Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-```
 
-```bash fzf-tab
+# Install Zsh plugins
 git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
-```
-
-``` bash zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-```
-
-```bash zsh-completions
-git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions
-```
-
-```bash zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-```
 
-### zsh
-
-```bash
+# Set Zsh as default shell
 chsh -s $(which zsh)
 ```
 
-### [rust](https://www.rust-lang.org/)
+#### Terminal Enhancements
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
+# Starship prompt
+curl -sS https://starship.rs/install.sh | sh
 
-### [sdkman](https://sdkman.io/)
+# Zoxide (smart cd)
+curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
 
-```bash
-curl -s "https://get.sdkman.io" | bash
-```
-
-### [nvm](https://github.com/nvm-sh/nvm)
-
-[Install](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
-
-### [neovim](https://github.com/neovim/neovim/blob/master/INSTALL.md)
-
-[Build](https://github.com/neovim/neovim/blob/master/BUILD.md)
-
-### [fzf](https://github.com/junegunn/fzf)
-
-```bash
+# FZF (if not installed via Nix)
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install
 ```
 
-### [starship](https://starship.rs/)
+### Development Tools
+
+#### Language Runtimes
 
 ```bash
-curl -sS https://starship.rs/install.sh | sh
+# Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# SDKMAN (Java, Kotlin, Scala, etc.)
+curl -s "https://get.sdkman.io" | bash
+
+# Node Version Manager
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ```
 
-### [zoxide](https://github.com/ajeetdsouza/zoxide)
+#### Development Tools (Go-based)
 
 ```bash
-curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
-
-```
-
-### [lazygit](https://github.com/jesseduffield/lazygit)
-
-```bash
+# Ensure Go is installed, then:
 go install github.com/jesseduffield/lazygit@latest
-```
-
-### [lazydocker](https://github.com/jesseduffield/lazydocker)
-
-```bash
 go install github.com/jesseduffield/lazydocker@latest
 ```
 
-### [tmux](https://github.com/tmux/tmux/wiki/Installing)
+### Tmux Setup
+
+#### System Installation
 
 | Platform         | Install Command     |
 | ---------------- | ------------------- |
-| Arch Linux       | pacman -S tmux      |
-| Debian or Ubuntu | apt install tmux    |
-| Fedora           | dnf install tmux    |
-| RHEL or CentOS   | yum install tmux    |
-| openSUSE         | zypper install tmux |
+| Arch Linux       | `pacman -S tmux`    |
+| Debian/Ubuntu    | `apt install tmux`  |
+| Fedora           | `dnf install tmux`  |
+| RHEL/CentOS      | `yum install tmux`  |
+| openSUSE         | `zypper install tmux` |
+| macOS            | `brew install tmux` |
 
-#### Dependencies
+#### Plugin Manager
 
 ```bash
+# Install TPM (Tmux Plugin Manager)
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
+
+#### Building from Source (if needed)
+
+```bash
+# Install dependencies first (varies by system)
+# Ubuntu/Debian: apt install libevent-dev ncurses-dev build-essential bison pkg-config
+# Fedora: dnf install libevent-devel ncurses-devel gcc make bison
+
 git clone https://github.com/tmux/tmux.git
 cd tmux
 sh autogen.sh
 ./configure && make
+sudo make install
 ```
 
-### [tpm](https://github.com/tmux-plugins/tpm)
+### Neovim Setup
+
+For the latest Neovim, refer to the [official installation guide](https://github.com/neovim/neovim/blob/master/INSTALL.md).
+
+#### Building from Source
 
 ```bash
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+# Install dependencies (Ubuntu/Debian example)
+sudo apt install ninja-build gettext cmake unzip curl
+
+git clone https://github.com/neovim/neovim
+cd neovim
+git checkout stable
+make CMAKE_BUILD_TYPE=RelWithDebInfo
+sudo make install
 ```
