@@ -30,6 +30,7 @@ with pkgs; [
   dust                   # Modern du replacement
   procs                  # Modern ps replacement
   neofetch               # System information tool
+  fastfetch               # System information tool
   
   # Network tools
   curl                   # HTTP client
