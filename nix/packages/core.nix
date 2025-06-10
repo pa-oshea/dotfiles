@@ -54,6 +54,7 @@ with pkgs; [
   
   # Terminal & editing
   tmux                   # Terminal multiplexer
+  tmux-sessionizer       # Sessionizer for tmux
   neovim                 # Modern text editor
   
   # File management
