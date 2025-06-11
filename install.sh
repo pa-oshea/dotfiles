@@ -302,7 +302,32 @@ post_install() {
   # Change default shell to zsh
   if [[ "$SHELL" != *"zsh" ]]; then
     log_info "Changing default shell to zsh..."
-    chsh -s "$(which zsh)" || log_warning "Failed to change shell, please run: chsh -s \$(which zsh)"
+
+    local zsh_path="$(which zsh)"
+    if [[ -n "$zsh_path" ]]; then
+      # Add zsh to /etc/shells if not already present
+      if ! grep -q "^$zsh_path$" /etc/shells 2>/dev/null; then
+        log_info "Adding $zsh_path to /etc/shells..."
+        echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+      fi
+
+      # Try different methods to change shell
+      if sudo chsh -s "$zsh_path" "$USER" 2>/dev/null; then
+        log_success "Shell changed to zsh using sudo"
+      elif chsh -s "$zsh_path" 2>/dev/null; then
+        log_success "Shell changed to zsh"
+      else
+        log_warning "Could not change shell automatically. Please run:"
+        log_warning "  echo \$(which zsh) | sudo tee -a /etc/shells"
+        log_warning "  sudo chsh -s \$(which zsh) $USER"
+        log_warning "Or manually add to ~/.bashrc:"
+        log_warning "  exec zsh"
+      fi
+    else
+      log_warning "Could not find zsh executable"
+    fi
+  else
+    log_info "Shell is already zsh"
   fi
 
   log_success "Post-installation complete!"
