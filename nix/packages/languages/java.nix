@@ -5,16 +5,12 @@
 { pkgs ? import <nixpkgs> {} }:
 
 with pkgs; [
-  # JDK (fallback - prefer mise/SDKMAN for version management)
-  openjdk21              # Latest LTS Java (fallback)
-  
   # Build tools
   maven                  # Maven build tool
   gradle                 # Gradle build tool
   ant                    # Apache Ant (legacy projects)
   
   # Language servers & development
-  jdt-language-server    # Java Language Server (Eclipse JDT)
   google-java-format     # Code formatter
   checkstyle             # Code style checker
   

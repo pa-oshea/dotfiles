@@ -5,11 +5,7 @@
 { pkgs ? import <nixpkgs> {} }:
 
 with pkgs; [
-  # Go runtime (fallback)
-  go                     # Go compiler and tools
-  
   # Development tools
-  gopls                  # Go Language Server
   golangci-lint          # Fast Go linters runner
   govulncheck            # Go vulnerability checker
   

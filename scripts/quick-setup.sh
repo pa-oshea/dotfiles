@@ -42,9 +42,9 @@ main() {
     # Run main installation
     log_info "⚙️  Installing dotfiles..."
     if is_first_run; then
-        ./install.sh --backup --languages rust node python go java
+        ./install.sh --backup
     else
-        ./install.sh --languages rust node python go java
+        ./install.sh
     fi
 
     log_success "✅ Setup complete!"
@@ -52,7 +52,6 @@ main() {
     log_info "🎯 What's installed:"
     log_info "   • Essential CLI tools (zsh, fzf, ripgrep, bat, etc.)"
     log_info "   • Development tools (git, tmux, neovim, docker, etc.)"
-    log_info "   • Language toolchains (Rust, Node.js, Python, Go, Java)"
     log_info ""
     log_info "🔧 Next steps:"
     log_info "   1. Restart your terminal"

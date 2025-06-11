@@ -5,16 +5,8 @@
 { pkgs ? import <nixpkgs> {} }:
 
 with pkgs; [
-  # Package managers (latest versions)
-  nodejs_latest          # Node.js runtime (fallback)
-  yarn                   # Yarn package manager
-  pnpm                   # Fast package manager
-  
   # Development tools
   typescript             # TypeScript compiler
-  ts-node                # TypeScript execution
-  
-  # Linting & formatting
   eslint                 # JavaScript/TypeScript linter
   prettier               # Code formatter
   
@@ -28,8 +20,6 @@ with pkgs; [
   # Utilities
   serve                  # Static file server
   nodemon                # Auto-restart on changes
-  
-  # Package analysis
   npm-check-updates      # Check for package updates
   
   # Security
