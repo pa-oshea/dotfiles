@@ -9,14 +9,14 @@
 git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
-chmod +x install.sh
-chmod +x scripts/*.sh
+# Make scripts executable
+chmod +x install.sh scripts/*.sh
 
 # One-command setup for new machines
 ./scripts/quick-setup.sh
 
-# Or manual setup
-./install-nix.sh
+# Or manual setup with specific languages
+./scripts/install-nix.sh
 ./install.sh --languages rust node python go java
 ```
 
@@ -77,7 +77,102 @@ sdk use java 21.0.1-tem
 ./scripts/update-all.sh --dry-run
 ```
 
-### Override Settings
+## 🧪 Testing
+
+### Docker Testing (Recommended)
+
+Test the installation safely in disposable containers:
+
+```bash
+# Quick one-liner test
+docker run -it --rm ubuntu:22.04 bash -c "
+  apt-get update && apt-get install -y git curl sudo xz-utils ca-certificates
+  useradd -m -s /bin/bash testuser
+  echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+  sudo -u testuser bash -c 'cd && git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./scripts/quick-setup.sh'
+"
+```
+
+#### Step-by-step testing
+
+```bash
+# 1. Start container
+docker run -it --rm ubuntu:22.04 bash
+
+# 2. Install dependencies
+apt-get update && apt-get install -y git curl sudo xz-utils ca-certificates
+
+# 3. Create user with passwordless sudo
+useradd -m -s /bin/bash testuser
+echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+# 4. Switch to test user
+su - testuser
+
+# 5. Clone and test dotfiles
+git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+./scripts/quick-setup.sh
+```
+
+#### Test different scenarios
+
+```bash
+# Test dry run
+./install.sh --dry-run --languages rust python
+
+# Test with backup
+./install.sh --backup --languages node
+
+# Test specific languages
+./install.sh --languages rust go java
+```
+
+### Other Testing Options
+
+#### Virtual Machine (Vagrant)
+
+```bash
+mkdir dotfiles-test && cd dotfiles-test
+cat > Vagrantfile << 'EOF'
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo -u vagrant git clone https://github.com/pa-oshea/dotfiles.git /home/vagrant/.dotfiles
+    cd /home/vagrant/.dotfiles && sudo -u vagrant ./scripts/quick-setup.sh
+  SHELL
+end
+EOF
+
+vagrant up && vagrant ssh
+```
+
+### What Gets Tested
+
+- ✅ Nix package manager installation
+- ✅ Core CLI tools (zsh, fzf, ripgrep, bat, etc.)
+- ✅ Development tools (git, tmux, neovim, docker)
+- ✅ Language-specific tooling (optional)
+- ✅ Shell configuration and symlinks
+- ✅ Error handling and recovery
+
+### Troubleshooting Tests
+
+If installation fails, check:
+
+```bash
+# Verify Nix installation
+nix --version
+
+# Check installed packages
+nix-env -q
+
+# View installation logs
+./install.sh --dry-run
+
+# Rollback if needed
+nix-env --rollback
+```
 
 ## 📚 Quick Commands
 

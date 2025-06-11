@@ -68,7 +68,7 @@ install_nix() {
         sh "$installer_file" --daemon
         ;;
     "ubuntu" | "debian" | "arch" | "fedora" | "centos" | "rhel" | *"linux"*)
-        if is_wsl; then
+        if is_wsl || [[ -n "${container:-}" ]] || [[ -f /.dockerenv ]]; then
             log_info "Installing Nix for WSL (single-user)..."
             sh "$installer_file" --no-daemon
         else
