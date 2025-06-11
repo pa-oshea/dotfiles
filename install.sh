@@ -185,6 +185,7 @@ setup_symlinks() {
 
   # Core config links
   create_symlink "$DOTFILES_DIR/zsh" "$HOME/.config/zsh"
+  create_symlink "$DOTFILES_DIR/starship" "$HOME/.config/starship"
   create_symlink "$DOTFILES_DIR/tmux" "$HOME/.config/tmux"
   create_symlink "$DOTFILES_DIR/.zshenv" "$HOME/.zshenv"
   create_symlink "$DOTFILES_DIR/.gitconfig" "$HOME/.gitconfig"

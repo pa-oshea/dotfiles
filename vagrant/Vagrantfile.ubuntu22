@@ -1,0 +1,17 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+  
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = 2
+    vb.name = "ubuntu22"
+  end
+  
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y git curl sudo xz-utils ca-certificates
+    sudo -u vagrant git clone https://github.com/pa-oshea/dotfiles.git /home/vagrant/.dotfiles
+    sudo -u vagrant chmod +x /home/vagrant/.dotfiles/install.sh /home/vagrant/.dotfiles/scripts/*.sh
+    echo "Ubuntu 22.04 ready! SSH in and run: cd ~/.dotfiles && ./scripts/quick-setup.sh"
+  SHELL
+end

@@ -81,10 +81,12 @@ sdk use java 21.0.1-tem
 
 ### Docker Testing (Recommended)
 
-Test the installation safely in disposable containers:
+Test the installation safely in disposable containers across different distributions:
+
+#### Ubuntu/Debian Testing
 
 ```bash
-# Quick one-liner test
+# Ubuntu 22.04
 docker run -it --rm ubuntu:22.04 bash -c "
   apt-get update && apt-get install -y git curl sudo xz-utils ca-certificates
   useradd -m -s /bin/bash testuser
@@ -93,14 +95,45 @@ docker run -it --rm ubuntu:22.04 bash -c "
 "
 ```
 
-#### Step-by-step testing
+#### Fedora Testing
 
 ```bash
-# 1. Start container
+# Fedora Latest
+docker run -it --rm fedora:latest bash -c "
+  dnf install -y git curl sudo xz ca-certificates
+  useradd -m -s /bin/bash testuser
+  echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+  sudo -u testuser bash -c 'cd && git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./scripts/quick-setup.sh'
+"
+```
+
+#### Arch Linux Testing
+
+```bash
+# Arch Linux Latest
+docker run -it --rm archlinux:latest bash -c "
+  pacman -Sy --noconfirm git curl sudo xz ca-certificates
+  useradd -m -s /bin/bash testuser
+  echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+  sudo -u testuser bash -c 'cd && git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./scripts/quick-setup.sh'
+"
+```
+
+#### Step-by-step testing (any distro)
+
+```bash
+# 1. Start container (replace with your preferred distro)
 docker run -it --rm ubuntu:22.04 bash
 
-# 2. Install dependencies
+# 2. Install dependencies (adjust package manager)
+# Ubuntu/Debian:
 apt-get update && apt-get install -y git curl sudo xz-utils ca-certificates
+
+# Fedora
+# dnf install -y git curl sudo xz ca-certificates
+
+# Arch:
+# pacman -Sy --noconfirm git curl sudo xz ca-certificates
 
 # 3. Create user with passwordless sudo
 useradd -m -s /bin/bash testuser
@@ -126,6 +159,12 @@ cd ~/.dotfiles
 
 # Test specific languages
 ./install.sh --languages rust go java
+
+# Test minimal installation
+./install.sh
+
+# Test full installation with all languages
+./install.sh --languages rust node python go java
 ```
 
 ### Other Testing Options
@@ -133,27 +172,41 @@ cd ~/.dotfiles
 #### Virtual Machine (Vagrant)
 
 ```bash
-mkdir dotfiles-test && cd dotfiles-test
-cat > Vagrantfile << 'EOF'
-Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/jammy64"
-  config.vm.provision "shell", inline: <<-SHELL
-    sudo -u vagrant git clone https://github.com/pa-oshea/dotfiles.git /home/vagrant/.dotfiles
-    cd /home/vagrant/.dotfiles && sudo -u vagrant ./scripts/quick-setup.sh
-  SHELL
-end
-EOF
+# Create test directory
+mkdir ~/dotfiles-vagrant-test
+cd ~/dotfiles-vagrant-test
 
-vagrant up && vagrant ssh
+# Test Ubuntu 22.04
+cp ~/.dotfiles/vagrant/Vagrantfile.ubuntu22 Vagrantfile 
+vagrant up
+vagrant ssh
+# Test your dotfiles, then exit
+
+# Destroy and test Fedora
+vagrant destroy -f
+cp Vagrantfile.fedora Vagrantfile 
+vagrant up
+vagrant ssh
+# Test your dotfiles
+
+# And so on for each distro...
+# Then:
+vagrant up
+vagrant ssh
+
+# Inside the VM:
+cd ~/.dotfiles
+./scripts/quick-setup.sh
 ```
 
 ### What Gets Tested
 
-- ✅ Nix package manager installation
+- ✅ Nix package manager installation across distributions
 - ✅ Core CLI tools (zsh, fzf, ripgrep, bat, etc.)
 - ✅ Development tools (git, tmux, neovim, docker)
 - ✅ Language-specific tooling (optional)
 - ✅ Shell configuration and symlinks
+- ✅ Package manager compatibility (apt, dnf, pacman)
 - ✅ Error handling and recovery
 
 ### Troubleshooting Tests
@@ -169,6 +222,11 @@ nix-env -q
 
 # View installation logs
 ./install.sh --dry-run
+
+# Test specific distribution dependencies
+# Ubuntu/Debian: apt list --installed | grep -E "(git|curl|xz)"
+# Fedora: dnf list installed | grep -E "(git|curl|xz)"
+# Arch: pacman -Q | grep -E "(git|curl|xz)"
 
 # Rollback if needed
 nix-env --rollback
