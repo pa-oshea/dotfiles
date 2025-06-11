@@ -1,7 +1,6 @@
 #!/bin/bash
 # Quick setup script for new machines
 # ~/.dotfiles/scripts/quick-setup.sh
-
 set -e
 
 # Colors
@@ -13,6 +12,27 @@ NC='\033[0m'
 log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+
+# Source Nix environment if available
+source_nix() {
+  local nix_profile_script=""
+
+  if [[ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]]; then
+    nix_profile_script="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+  elif [[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]]; then
+    nix_profile_script="$HOME/.nix-profile/etc/profile.d/nix.sh"
+  elif [[ -f "/etc/profile.d/nix.sh" ]]; then
+    nix_profile_script="/etc/profile.d/nix.sh"
+  fi
+
+  if [[ -n "$nix_profile_script" ]]; then
+    log_info "Sourcing Nix from: $nix_profile_script"
+    source "$nix_profile_script"
+    return 0
+  else
+    return 1
+  fi
+}
 
 # Detect if this is first run
 is_first_run() {
@@ -32,12 +52,25 @@ main() {
   if ! command -v nix >/dev/null 2>&1; then
     log_info "📦 Installing Nix package manager..."
     ./scripts/install-nix.sh
-
-    # Source Nix for current session
-    if [[ -f ~/.nix-profile/etc/profile.d/nix.sh ]]; then
-      source ~/.nix-profile/etc/profile.d/nix.sh
-    fi
   fi
+
+  # Source Nix for current session
+  log_info "🔧 Setting up Nix environment..."
+  if ! source_nix; then
+    log_warning "Could not source Nix environment automatically"
+    log_info "You may need to restart your terminal or run:"
+    log_info "  source ~/.nix-profile/etc/profile.d/nix.sh"
+    exit 1
+  fi
+
+  # Verify Nix is available
+  if ! command -v nix >/dev/null 2>&1; then
+    log_warning "Nix not available after sourcing. Please restart terminal and run:"
+    log_info "  cd ~/.dotfiles && ./install.sh"
+    exit 1
+  fi
+
+  log_success "Nix is available: $(nix --version)"
 
   # Run main installation
   log_info "⚙️  Installing dotfiles..."
