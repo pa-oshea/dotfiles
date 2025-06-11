@@ -1,0 +1,38 @@
+configuration {
+    modi: "drun,run,window,ssh,filebrowser";
+    show-icons: true;
+    terminal: "alacritty";
+    drun-display-format: "{name} [<span weight='light' size='small'><i>({generic})</i></span>]";
+    window-format: "{w}    {c}   {t}";
+    location: 0;
+    disable-history: false;
+    hide-scrollbar: true;
+    display-drun: "   Apps ";
+    display-run: "   Run ";
+    display-window: " 﩯  Window";
+    display-ssh: " 󰢹  SSH";
+    display-filebrowser: " 󰉋  Files";
+    sidebar-mode: true;
+    font: "JetBrains Mono Nerd Font 12";
+    
+    /* Performance improvements */
+    lazy-grab: true;
+    matching: "fuzzy";
+    sort: true;
+    sorting-method: "fzf";
+    
+    /* Behavior enhancements */
+    cycle: true;
+    wrap: false;
+    fullscreen: false;
+    width: 45;
+    lines: 12;
+    columns: 1;
+    
+    /* Window positioning */
+    anchor: center;
+    x-offset: 0;
+    y-offset: 0;
+}
+
+@theme "catppuccin-mocha"
