@@ -9,6 +9,7 @@
 git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
+chmod +x install.sh
 chmod +x scripts/*.sh
 
 # One-command setup for new machines

@@ -202,6 +202,9 @@ eval "$(starship init zsh)"
 # Initialize zoxide (smart cd)
 eval "$(zoxide init --cmd cd zsh)"
 
+# Initialize mise
+eval "$(mise activate zsh)"
+
 # Load custom functions
 [[ -f "$ZDOTDIR/.zshfunc" ]] && source "$ZDOTDIR/.zshfunc"
 
