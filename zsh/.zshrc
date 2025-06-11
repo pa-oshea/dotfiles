@@ -43,6 +43,7 @@ plugins=(
     eza
     sudo
     tmux
+    vagrant
 )
 
 # Add completions to fpath before Oh My Zsh loads
