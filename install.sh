@@ -196,6 +196,11 @@ setup_symlinks() {
     chmod +x "$HOME/.local/bin/tmux-sessionizer.sh"
   fi
 
+  if [[ -f "$DOTFILES_DIR/tmux/tmux-status-info.sh" ]]; then
+    create_symlink "$DOTFILES_DIR/tmux/tmux-status-info.sh" "$HOME/.local/bin/tmux-status-info.sh"
+    chmod +x "$HOME/.local/bin/tmux-status-info.sh"
+  fi
+
   log_success "Symbolic links created!"
 }
 
