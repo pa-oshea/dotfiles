@@ -1,0 +1,108 @@
+[mgr]
+prepend_keymap = [
+  { on = [
+    "<C-s>",
+  ], run = "search fd" },
+  { on = [
+    "<C-f>",
+  ], run = "filter --smart" },
+  { on = [
+    "T",
+  ], run = "plugin --sync max-preview" },
+  { on = [
+    ";",
+  ], run = "shell --confirm" },
+  { on = [
+    ":",
+  ], run = "shell --block" },
+  { on = [
+    ".",
+  ], run = "hidden toggle" },
+  { on = [
+    "S",
+  ], run = "shell \"$SHELL\" --block --confirm" },
+  { on = [
+    "<A-k>",
+  ], run = "seek -5" },
+  { on = [
+    "<A-j>",
+  ], run = "seek 5" },
+  { on = [
+    "<A-Up>",
+  ], run = "seek -5" },
+  { on = [
+    "<A-Down>",
+  ], run = "seek 5" },
+  { on = [
+    "<C-u>",
+  ], run = "seek -10" },
+  { on = [
+    "<C-d>",
+  ], run = "seek 10" },
+  { on = [
+    "g",
+    "g",
+  ], run = "arrow -99999999" },
+  { on = [
+    "G",
+  ], run = "arrow 99999999" },
+]
+
+[tasks]
+prepend_keymap = [
+  { on = [
+    "<Esc>",
+  ], run = "close" },
+  { on = [
+    "<C-q>",
+  ], run = "close" },
+  { on = [
+    "w",
+  ], run = "close" },
+]
+
+[select]
+prepend_keymap = [
+  { on = [
+    "<Esc>",
+  ], run = "close" },
+  { on = [
+    "<C-q>",
+  ], run = "close" },
+  { on = [
+    "w",
+  ], run = "close" },
+]
+
+[input]
+prepend_keymap = [
+  { on = [
+    "<C-q>",
+  ], run = "close" },
+  { on = [
+    "<Esc>",
+  ], run = "close" },
+]
+
+[help]
+prepend_keymap = [
+  { on = [
+    "<Esc>",
+  ], run = "escape" },
+  { on = [
+    "<C-q>",
+  ], run = "escape" },
+  { on = [
+    "w",
+  ], run = "escape" },
+]
+
+[completion]
+prepend_keymap = [
+  { on = [
+    "<C-q>",
+  ], run = "close" },
+  { on = [
+    "<Esc>",
+  ], run = "close" },
+]
