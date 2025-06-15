@@ -1,0 +1,121 @@
+# -----------------------------------------------------------------------------
+# Search Behavior
+# -----------------------------------------------------------------------------
+# Smart case matching (case-insensitive unless uppercase letters are used)
+--smart-case
+
+# Search hidden files and directories
+--hidden
+
+# Follow symbolic links
+--follow
+
+# Use heading format for better readability
+--heading
+
+# Sort results by path for consistent output
+--sort=path
+
+# -----------------------------------------------------------------------------
+# Output Format
+# -----------------------------------------------------------------------------
+# Show line numbers
+--line-number
+
+# Show column numbers
+--column
+
+# Show context lines (2 before and after matches)
+--context=2
+
+# -----------------------------------------------------------------------------
+# Color Configuration
+# -----------------------------------------------------------------------------
+--colors=line:fg:yellow
+--colors=line:style:bold
+--colors=path:fg:green
+--colors=path:style:bold
+--colors=match:fg:black
+--colors=match:bg:yellow
+--colors=match:style:nobold
+
+# -----------------------------------------------------------------------------
+# Performance Settings
+# -----------------------------------------------------------------------------
+# Use multiple threads for faster searching
+--threads=4
+
+# Limit file size to avoid searching large binary files
+--max-filesize=10M
+
+# Use memory mapping for better performance
+--mmap
+
+# -----------------------------------------------------------------------------
+# Directory and File Exclusions
+# -----------------------------------------------------------------------------
+# Version control
+--glob=!.git/*
+--glob=!.svn/*
+--glob=!.hg/*
+
+# Dependencies and build artifacts
+--glob=!node_modules/*
+--glob=!target/*
+--glob=!build/*
+--glob=!dist/*
+--glob=!.next/*
+--glob=!coverage/*
+--glob=!.nyc_output/*
+
+# Cache and temporary files
+--glob=!.cache/*
+--glob=!*.tmp
+--glob=!*.temp
+--glob=!*.swp
+--glob=!*.swo
+--glob=!*~
+
+# Lock and log files
+--glob=!*.lock
+--glob=!*.log
+--glob=!*.pid
+
+# Compiled and minified files
+--glob=!*.min.js
+--glob=!*.min.css
+--glob=!*.bundle.js
+--glob=!*.chunk.js
+
+# OS-specific files
+--glob=!.DS_Store
+--glob=!Thumbs.db
+--glob=!desktop.ini
+
+# IDE and editor files
+--glob=!.vscode/*
+--glob=!.idea/*
+--glob=!*.sublime-*
+
+# -----------------------------------------------------------------------------
+# Custom File Types
+# -----------------------------------------------------------------------------
+# Web development files
+--type-add=web:*.{html,htm,css,scss,sass,less,js,jsx,ts,tsx,vue,svelte,astro}
+
+# Configuration files
+--type-add=config:*.{json,yaml,yml,toml,ini,conf,cfg,env}
+
+# Documentation files
+--type-add=docs:*.{md,txt,rst,adoc,org}
+
+# Shell scripts
+--type-add=shell:*.{sh,bash,zsh,fish}
+
+# Data files
+--type-add=data:*.{csv,tsv,json,xml,sql}
+
+# -----------------------------------------------------------------------------
+# Search Patterns for Common Use Cases
+# -----------------------------------------------------------------------------
+# These can be used with --type flag, e.g., rg --type web "pattern"
