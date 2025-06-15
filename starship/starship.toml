@@ -47,7 +47,6 @@ $time\
 [character]
 success_symbol = "[λ](bold green)"
 error_symbol = "[λ](bold red)"
-vicmd_symbol = "[λ](bold yellow)"
 vimcmd_replace_one_symbol = "[λ](bold purple)"
 vimcmd_replace_symbol = "[λ](bold purple)"
 vimcmd_visual_symbol = "[λ](bold blue)"
@@ -74,23 +73,22 @@ format = "[$path]($style)[$read_only]($read_only_style) "
 # Git Configuration
 # -----------------------------------------------------------------------------
 [git_branch]
-symbol = " "
+symbol = " "
 style = "bold purple"
 format = "on [$symbol$branch(:$remote_branch)]($style) "
 
 [git_status]
-style = "bold red"
 format = '([\[$all_status$ahead_behind\]]($style) )'
-conflicted = "⚔️ "
-ahead = " 🏎️ 💨×${count}"
-behind = " 🐢×${count}"
-diverged = " 🔱 🏎️ 💨×${ahead_count} 🐢×${behind_count}"
-untracked = " 🛤️×${count}"
-stashed = " 📦×${count}"
-modified = " 📝×${count}"
-staged = " 🗃️×${count}"
-renamed = " 📛×${count}"
-deleted = " 🗑️×${count}"
+conflicted = "[⚠](bold red)"
+ahead = "[⬆](bold green) ${count}"
+behind = "[⬇](bold yellow) ${count}"
+diverged = "[⬆](bold green) ${ahead_count}[⬇](bold yellow) ${behind_count}"
+untracked = "[●](bold blue) ${count}"
+stashed = "[≡](bold cyan) ${count}"
+modified = "[△](bold yellow) ${count}"
+staged = "[✓](bold green) ${count}"
+renamed = "[➤](bold purple) ${count}"
+deleted = "[✕](bold red) ${count}"
 
 [git_metrics]
 disabled = false
@@ -101,33 +99,36 @@ format = '([+$added]($added_style) )([-$deleted]($deleted_style) )'
 # -----------------------------------------------------------------------------
 # Language & Package Configuration
 # -----------------------------------------------------------------------------
+[hg_branch]
+symbol = " "
+
 [package]
 symbol = "📦 "
 style = "bold yellow"
 format = "via [$symbol$version]($style) "
 
 [nodejs]
-symbol = " "
+symbol = " "
 style = "bold green"
 format = "via [$symbol($version )]($style)"
 
 [python]
-symbol = " "
+symbol = " "
 style = "bold blue"
 format = 'via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
 
 [rust]
-symbol = " "
+symbol = " "
 style = "bold orange"
 format = "via [$symbol($version )]($style)"
 
 [golang]
-symbol = " "
+symbol = " "
 style = "bold cyan"
 format = "via [$symbol($version )]($style)"
 
 [java]
-symbol = " "
+symbol = " "
 style = "bold red"
 format = "via [$symbol($version )]($style)"
 
@@ -135,7 +136,7 @@ format = "via [$symbol($version )]($style)"
 # Cloud & Container Configuration
 # -----------------------------------------------------------------------------
 [docker_context]
-symbol = " "
+symbol = " "
 style = "bold blue"
 format = "via [$symbol$context]($style) "
 
@@ -216,43 +217,43 @@ disabled = false
 # Additional Language Support
 # -----------------------------------------------------------------------------
 [c]
-symbol = " "
+symbol = " "
 style = "bold blue"
 
 [lua]
-symbol = " "
+symbol = " "
 style = "bold blue"
 
 [ruby]
-symbol = " "
+symbol = " "
 style = "bold red"
 
 [scala]
-symbol = " "
+symbol = " "
 style = "bold red"
 
 [dart]
-symbol = " "
+symbol = " "
 style = "bold blue"
 
 [elixir]
-symbol = " "
+symbol = " "
 style = "bold purple"
 
 [elm]
-symbol = " "
+symbol = " "
 style = "bold cyan"
 
 [haskell]
-symbol = " "
+symbol = " "
 style = "bold purple"
 
 [julia]
-symbol = " "
+symbol = " "
 style = "bold purple"
 
 [nim]
-symbol = " "
+symbol = " "
 style = "bold orange"
 
 [rlang]
@@ -263,16 +264,18 @@ style = "bold blue"
 # Build Tools & Frameworks
 # -----------------------------------------------------------------------------
 [buf]
-symbol = " "
+symbol = " "
 
 [conda]
-symbol = " "
+symbol = " "
+
 
 [meson]
-symbol = "󰔷 "
+symbol = "喝 "
 
 [nix_shell]
-symbol = " "
+symbol = " "
+
 
 [spack]
 symbol = "🅢 "
@@ -283,7 +286,7 @@ symbol = "🅢 "
 [memory_usage]
 disabled = false
 threshold = 70
-symbol = " "
+symbol = " "
 style = "bold dimmed red"
 format = "$symbol[${ram}( | ${swap})]($style) "
 
