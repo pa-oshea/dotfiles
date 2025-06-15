@@ -159,6 +159,9 @@ eval "$(zoxide init --cmd cd zsh)"
 # Initialize mise
 eval "$(mise activate zsh)"
 
+# Load aliases
+[[ -f "$ZDOTDIR/.zshalias" ]] && source "$ZDOTDIR/.zshalias"
+
 # Load custom functions
 [[ -f "$ZDOTDIR/.zshfunc" ]] && source "$ZDOTDIR/.zshfunc"
 

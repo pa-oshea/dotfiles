@@ -1,0 +1,136 @@
+[mgr]
+# Layout and display options
+layout = [1, 4, 3]
+sort_by = "alphabetical"
+sort_sensitive = false
+sort_reverse = false
+sort_dir_first = true
+sort_translit = false
+linemode = "none"
+show_hidden = false
+show_symlink = true
+scrolloff = 5
+mouse_events = ["click", "scroll"]
+title_format = "Yazi: {cwd}"
+
+[preview]
+# Preview settings
+tab_size = 2
+max_width = 600
+max_height = 900
+cache_dir = ""
+image_filter = "triangle"
+image_quality = 75
+sixel_fraction = 15
+ueberzug_scale = 1
+ueberzug_offset = [0, 0]
+
+[opener]
+# File associations
+edit = [{ run = '$EDITOR "$@"', desc = "Edit", block = true, for = "unix" }]
+open = [{ run = 'xdg-open "$@"', desc = "Open", for = "linux" }]
+reveal = [
+  { run = 'xdg-open "$(dirname "$0")"', desc = "Reveal", for = "linux" },
+]
+extract = [
+  { run = 'ya pub extract --list "$@"', desc = "Extract here", for = "unix" },
+]
+play = [
+  { run = 'mpv "$@"', orphan = true, for = "unix" },
+  { run = 'mediainfo "$1"; echo "Press enter to continue"; read _', block = true, desc = "Show media info", for = "unix" },
+]
+
+[open]
+# Rules for opening different file types
+rules = [
+  # Text files
+  { name = "*/", use = ["edit", "open", "reveal"] },
+  { mime = "text/*", use = ["edit", "reveal"] },
+  { mime = "application/json", use = ["edit", "reveal"] },
+  { mime = "*/xml", use = ["edit", "reveal"] },
+  { mime = "application/toml", use = ["edit", "reveal"] },
+  { mime = "application/x-yaml", use = ["edit", "reveal"] },
+
+  # Archives
+  { mime = "application/zip", use = ["extract", "reveal"] },
+  { mime = "application/gzip", use = ["extract", "reveal"] },
+  { mime = "application/x-tar", use = ["extract", "reveal"] },
+  { mime = "application/x-bzip*", use = ["extract", "reveal"] },
+  { mime = "application/x-7z-compressed", use = ["extract", "reveal"] },
+  { mime = "application/x-rar", use = ["extract", "reveal"] },
+  { mime = "application/xz", use = ["extract", "reveal"] },
+
+  # Documents
+  { mime = "application/pdf", use = ["open", "reveal"] },
+  { mime = "application/msword", use = ["open", "reveal"] },
+  { mime = "application/vnd.ms-excel", use = ["open", "reveal"] },
+
+  # Media files
+  { mime = "image/*", use = ["open", "reveal"] },
+  { mime = "video/*", use = ["play", "reveal"] },
+  { mime = "audio/*", use = ["play", "reveal"] },
+
+  # Fallback
+  { mime = "*", use = ["open", "reveal"] },
+]
+
+[tasks]
+# Task management
+micro_workers = 10
+macro_workers = 25
+bizarre_retry = 5
+image_alloc = 536870912  # 512MB
+image_bound = [0, 0]
+suppress_preload = false
+
+[plugin]
+# Plugin configuration
+fetchers = [
+  # { id = "git", name = "*", run = "git" },
+  # { id = "git", name = "*/", run = "git" },
+]
+preloaders = [
+  { name = "*/", run = "mime" },
+  { mime = "image/{avif,bmp,gif,jpeg,jpg,png,svg,webp}", run = "image" },
+  { mime = "video/*", run = "video" },
+  { mime = "application/pdf", run = "pdf" },
+  { mime = "inode/directory", run = "folder", multi = true },
+]
+previewers = [
+  { name = "*/", run = "folder", sync = true },
+  { mime = "text/*", run = "code" },
+  { mime = "*/xml", run = "code" },
+  { mime = "*/javascript", run = "code" },
+  { mime = "*/x-wine-extension-ini", run = "code" },
+  { mime = "application/json", run = "json" },
+  { mime = "image/{avif,bmp,gif,jpeg,jpg,png,svg,webp}", run = "image" },
+  { mime = "video/*", run = "video" },
+  { mime = "audio/*", run = "audio" },
+  { mime = "application/pdf", run = "pdf" },
+  { mime = "application/zip", run = "archive" },
+  { mime = "application/gzip", run = "archive" },
+  { mime = "application/x-tar", run = "archive" },
+  { mime = "application/x-bzip*", run = "archive" },
+  { mime = "application/x-7z-compressed", run = "archive" },
+  { mime = "application/x-rar", run = "archive" },
+  { mime = "application/xz", run = "archive" },
+]
+
+[input]
+# Input settings  
+cursor_blink = false
+
+[select]
+# Selection settings
+open_title = "Open with:"
+open_origin = "hovered"
+
+[which]
+# Which-key settings
+sort_by = "none"
+sort_sensitive = false
+sort_reverse = false
+
+[log]
+# Logging settings
+enabled = false

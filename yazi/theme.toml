@@ -16,7 +16,24 @@ border_style = { fg = "#665c54" }
 [status]
 separator_open = ""
 separator_close = ""
-separator_style = { fg = "#3c3836", bg = "#3c3836" }
+separator_style = { fg = "#504945", bg = "#504945" }
+
+# Mode indicators
+mode_normal = { fg = "#a89984", bold = true }
+mode_select = { fg = "#b8bb26", bold = true }
+mode_unset = { fg = "#fb4934", bold = true }
+
+# Progress indicators  
+progress_label = { bold = true }
+progress_normal = { fg = "#83a598", bg = "#3c3836" }
+progress_error = { fg = "#fb4934", bg = "#3c3836" }
+
+# Permissions
+permissions_t = { fg = "#b8bb26" }
+permissions_r = { fg = "#fabd2f" }
+permissions_w = { fg = "#fb4934" }
+permissions_x = { fg = "#83a598" }
+permissions_s = { fg = "#d3869b" }
 
 [select]
 border = { fg = "#83a598" }
