@@ -1,0 +1,181 @@
+# -----------------------------------------------------------------------------
+# ALIASES
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Quick shortcuts
+# -----------------------------------------------------------------------------
+alias lg="lazygit"
+alias ld="lazydocker"
+alias q="exit"
+
+# -----------------------------------------------------------------------------
+# Directory navigation
+# -----------------------------------------------------------------------------
+alias dev="cd $DEV_HOME"
+alias work="cd $WORK_HOME"
+alias dots="cd $XDG_CONFIG_HOME"
+
+# -----------------------------------------------------------------------------
+# Config editing
+# -----------------------------------------------------------------------------
+alias zshconfig="$EDITOR $ZDOTDIR/.zshrc"
+alias zshenv="$EDITOR ~/.zshenv"
+alias starconfig="$EDITOR $STARSHIP_CONFIG"
+
+# -----------------------------------------------------------------------------
+# File listing and directory operations
+# -----------------------------------------------------------------------------
+alias ll="eza -la --git --icons --group-directories-first"
+alias la="eza -la --git --icons --group-directories-first"
+alias ls="eza -la --git --icons --group-directories-first"
+alias lt="eza -T --git --icons --level=2"
+alias lt2="eza -T --git --icons --level=2" # 2-level tree
+alias lt3="eza -T --git --icons --level=3" # 3-level tree
+
+# -----------------------------------------------------------------------------
+# Modern CLI replacements (Nix packages)
+# -----------------------------------------------------------------------------
+alias dust="dust -r"                      # Reverse sort by size
+alias ps="procs"                          # Modern ps replacement
+
+# -----------------------------------------------------------------------------
+# System monitoring and utilities
+# -----------------------------------------------------------------------------
+alias df="df -h"
+alias du="du -sh"
+alias ports="ss -tuln"
+alias listening="ss -tlnp"
+alias sysinfo="fastfetch"                 # Fast system info
+alias neofetch="fastfetch"                # Use fastfetch instead
+alias usage="dust -d 1"                   # Disk usage summary
+alias meminfo="btm --memory"              # Memory usage
+
+# -----------------------------------------------------------------------------
+# JSON/YAML processing
+# -----------------------------------------------------------------------------
+alias json="fx"                           # Interactive JSON viewer
+alias yaml="yq"                           # YAML processor
+alias pretty="jq ."                       # Pretty print JSON
+alias prettyyml="yq . -P"                 # Pretty print YAML
+
+# -----------------------------------------------------------------------------
+# Development workflow
+# -----------------------------------------------------------------------------
+alias bench="hyperfine"                   # Benchmarking tool
+alias loc="tokei"                         # Lines of code
+alias api="atac"                          # API testing TUI
+alias dive="dive"                         # Docker image analyzer
+
+# -----------------------------------------------------------------------------
+# Network and HTTP
+# -----------------------------------------------------------------------------
+alias http="http --print=HhBb"            # HTTPie with headers and body
+alias https="http --print=HhBb https://"  # HTTPS variant
+alias curl="curl -w '\n'"                 # Curl with newline
+
+# -----------------------------------------------------------------------------
+# File management
+# -----------------------------------------------------------------------------
+alias fm="yazi"                           # Terminal file manager
+
+# -----------------------------------------------------------------------------
+# Documentation and help
+# -----------------------------------------------------------------------------
+# Note: help() function in .zshfunc provides better functionality
+alias cheat="navi"                        # Interactive cheatsheet
+alias tldr="tldr --color always"          # Always use color
+
+# -----------------------------------------------------------------------------
+# Kubernetes (complement kubectl plugin)
+# -----------------------------------------------------------------------------
+alias k9="k9s"                           # Kubernetes TUI
+alias kube="kubectl"                      # Short kubectl
+
+# -----------------------------------------------------------------------------
+# Container management (complement docker plugin)
+# -----------------------------------------------------------------------------
+alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dlogs="docker logs -f"
+alias dexec="docker exec -it"
+alias dimg="docker images --format 'table {{.Repository}}\t{{.Tag}}\t{{.Size}}'"
+
+# -----------------------------------------------------------------------------
+# Clipboard utilities (Linux-specific)
+# -----------------------------------------------------------------------------
+alias clip="xclip -selection clipboard"
+alias paste="xclip -selection clipboard -o"
+
+# -----------------------------------------------------------------------------
+# File watching and automation
+# -----------------------------------------------------------------------------
+alias watch="watch -c"                    # Watch with color
+alias autorun="entr -c"                   # Run command on file changes
+alias parallel="parallel --will-cite"     # Suppress citation notice
+
+# -----------------------------------------------------------------------------
+# Enhanced shell experience
+# -----------------------------------------------------------------------------
+alias reload="source ~/.zshrc"            # Reload zsh config
+alias path="echo $PATH | tr ':' '\n'"     # Pretty print PATH
+alias env="env | sort"                    # Sorted environment variables
+
+# -----------------------------------------------------------------------------
+# Markdown viewing
+# -----------------------------------------------------------------------------
+alias md="glow"                           # Markdown viewer
+alias readme="glow README.md"             # Quick readme view
+alias mdprev="glow -p"                    # Markdown with pager
+
+# -----------------------------------------------------------------------------
+# Ripgrep aliases for common patterns
+# -----------------------------------------------------------------------------
+alias rgf='rg --files'                    # List files that would be searched
+alias rgi='rg --ignore-case'              # Case-insensitive search
+alias rgw='rg --word-regexp'              # Whole word matches only
+alias rgt='rg --type'                     # Search specific file types
+alias rgv='rg --invert-match'             # Invert match (like grep -v)
+alias rgc='rg --count'                    # Count matches per file
+alias rgl='rg --files-with-matches'       # Only show filenames with matches
+
+# Specialized searches
+alias rgtodo='rg -i "todo|fixme|hack|xxx"'
+alias rgconf='rg --type config'
+alias rgweb='rg --type web'
+alias rgdocs='rg --type docs'
+
+# -----------------------------------------------------------------------------
+# Database tools
+# -----------------------------------------------------------------------------
+alias sqlite="sqlite3"                    # SQLite CLI
+alias db="sqlite3"                        # Short database alias
+
+# -----------------------------------------------------------------------------
+# Code quality and linting
+# -----------------------------------------------------------------------------
+alias shellcheck="shellcheck -f gcc"      # GCC-style output
+alias yamllint="yamllint -f parsable"     # Parsable output
+
+# -----------------------------------------------------------------------------
+# Just command runner
+# -----------------------------------------------------------------------------
+alias j="just"                            # Short just alias
+alias jl="just --list"                    # List available commands
+alias jr="just --dry-run"                 # Dry run commands
+
+# -----------------------------------------------------------------------------
+# Mise version manager
+# -----------------------------------------------------------------------------
+alias mr="mise run"                       # Run mise tasks
+alias ml="mise list"                      # List installed versions
+alias mi="mise install"                   # Install versions
+
+# -----------------------------------------------------------------------------
+# Enhanced utilities with fzf integration
+# -----------------------------------------------------------------------------
+# Note: fe() function in .zshfunc provides file editing with fzf
+alias fh='history | fzf --tac --no-sort | sed "s/ *[0-9]* *//" | tr -d "\n" | clip'
+alias fcd='cd $(fd -t d | fzf --preview "eza -la {}")'
+alias fkill='ps -ef | fzf --header-lines=1 | awk "{print \$2}" | xargs kill -9'
+alias fenv='env | fzf | cut -d= -f1'
+alias ff='fd -t f | fzf'                  # Quick file finder (complement to fe function)

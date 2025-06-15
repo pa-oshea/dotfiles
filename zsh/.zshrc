@@ -147,53 +147,6 @@ if [[ ! "$plugins" =~ "fzf" ]]; then
 fi
 
 # -----------------------------------------------------------------------------
-# Aliases
-# -----------------------------------------------------------------------------
-
-# Quick shortcuts
-alias lg="lazygit"
-alias ld="lazydocker"
-alias q="exit"
-
-# Enhanced utilities
-alias fh='history | fzf --tac --no-sort | sed "s/ *[0-9]* *//" | tr -d "\n" | pbcopy'
-alias fd='cd $(find * -type d | fzf)'
-alias fkill='ps -ef | fzf | awk "{print \$2}" | xargs kill -9'
-
-# Directory navigation
-alias dev="cd $DEV_HOME"
-alias work="cd $WORK_HOME"
-alias dots="cd $XDG_CONFIG_HOME"
-
-# Config editing
-alias zshconfig="$EDITOR $ZDOTDIR/.zshrc"
-alias zshenv="$EDITOR ~/.zshenv"
-alias starconfig="$EDITOR $STARSHIP_CONFIG"
-
-# Git shortcuts
-alias gs="git status -sb"
-alias ga="git add"
-alias gc="git commit"
-alias gp="git push"
-alias gl="git log --oneline --decorate --graph"
-alias gd="git diff"
-alias gb="git branch"
-alias gco="git checkout"
-alias gcb="git checkout -b"
-
-# System utilities
-alias ll="eza -la --git --icons --group-directories-first"
-alias la="eza -la --git --icons --group-directories-first"
-alias ls="eza --icons --group-directories-first"
-alias lt="eza -T --git --icons --level=2"
-
-# System monitoring
-alias df="df -h"
-alias du="du -sh"
-alias ports="ss -tuln"
-alias listening="ss -tlnp"
-
-# -----------------------------------------------------------------------------
 # Tool Initialization
 # -----------------------------------------------------------------------------
 
