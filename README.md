@@ -172,12 +172,8 @@ cd ~/.dotfiles
 #### Virtual Machine (Vagrant)
 
 ```bash
-# Create test directory
-mkdir ~/dotfiles-vagrant-test
-cd ~/dotfiles-vagrant-test
-
 # Test Ubuntu 22.04
-cp ~/.dotfiles/vagrant/Vagrantfile.ubuntu22 Vagrantfile 
+cp vagrant/Vagrantfile.ubuntu22 Vagrantfile 
 vagrant up
 vagrant ssh
 # Test your dotfiles, then exit
@@ -352,8 +348,9 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 # Install Zsh plugins
 git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-completions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
+git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/wfxr/forgit.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/forgit
 
 # Set Zsh as default shell
 chsh -s $(which zsh)

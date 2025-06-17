@@ -5,4 +5,6 @@ packer_compiled.lua
 .zcompdump.dat
 .zcompdump.zwc
 .zhistory
+.vagrant
+Vagrantfile
 

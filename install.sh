@@ -158,6 +158,7 @@ install_shell_enhancements() {
   install_zsh_plugin "zsh-users/zsh-syntax-highlighting" "zsh-syntax-highlighting"
   install_zsh_plugin "zsh-users/zsh-completions" "zsh-completions"
   install_zsh_plugin "Aloxaf/fzf-tab" "fzf-tab"
+  install_zsh_plugin "wfxr/forgit" "forgit"
 
   # Tmux plugin manager
   if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
