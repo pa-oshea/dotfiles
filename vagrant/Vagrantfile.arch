@@ -1,11 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 Vagrant.configure("2") do |config|
   config.vm.box = "archlinux/archlinux"
+  config.vm.box_check_update = true
+  config.vm.hostname = "arch-dotfiles-test"
   
-  config.vm.provider "virtualbox" do |vb|
-    vb.memory = "2048"
-    vb.cpus = 2
-    vb.name = "arch"
+  config.vm.provider "libvirt" do |libvirt|
+    # Resource allocation (adjust based on your host specs)
+    libvirt.memory = 2048
+    libvirt.cpus = 2
+    
+    # VM identification
+    libvirt.title = "Arch Linux Dotfiles Test Environment"
+    libvirt.description = "Arch Linux VM for testing dotfiles via SSH"
+    
+    # Performance optimizations
+    libvirt.nested = true                    # Enable nested virtualization
+    libvirt.cpu_mode = 'host-passthrough'   # Best CPU performance
+    libvirt.machine_type = "q35"            # Modern machine type
+    libvirt.disk_bus = "virtio"             # Faster disk I/O
+    libvirt.nic_model_type = "virtio"       # Faster network
+    
+    # Random number generator for better entropy
+    libvirt.random :model => 'random'
+    
+    # Additional storage if needed (uncomment to add a 50GB data disk)
+    # libvirt.storage :file, :size => '50G', :type => 'qcow2', :bus => 'virtio'
+    
+    # USB redirection for better hardware support
+    libvirt.usb_controller :model => 'nec-xhci', :ports => 8
+    
+    # Memory balloon for dynamic memory management
+    libvirt.memorybacking :access, :mode => "shared"
   end
+  # TODO: could map the dotfiles instead of using git clone
   
   config.vm.provision "shell", inline: <<-SHELL
     pacman -Syu --noconfirm
