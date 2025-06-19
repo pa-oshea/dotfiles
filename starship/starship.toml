@@ -73,22 +73,9 @@ format = "[$path]($style)[$read_only]($read_only_style) "
 # Git Configuration
 # -----------------------------------------------------------------------------
 [git_branch]
-symbol = " "
+symbol = " "
 style = "bold purple"
 format = "on [$symbol$branch(:$remote_branch)]($style) "
-
-[git_status]
-format = '([\[$all_status$ahead_behind\]]($style) )'
-conflicted = "[⚠](bold red)"
-ahead = "[⬆](bold green) ${count}"
-behind = "[⬇](bold yellow) ${count}"
-diverged = "[⬆](bold green) ${ahead_count}[⬇](bold yellow) ${behind_count}"
-untracked = "[●](bold blue) ${count}"
-stashed = "[≡](bold cyan) ${count}"
-modified = "[△](bold yellow) ${count}"
-staged = "[✓](bold green) ${count}"
-renamed = "[➤](bold purple) ${count}"
-deleted = "[✕](bold red) ${count}"
 
 [git_metrics]
 disabled = false
@@ -169,7 +156,7 @@ style_user = "bold blue"
 style_root = "bold red"
 format = "[$user]($style) "
 disabled = false
-show_always = true
+show_always = false
 
 [hostname]
 ssh_only = true
