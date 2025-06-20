@@ -5,11 +5,6 @@
 { pkgs ? import <nixpkgs> {} }:
 
 with pkgs; [
-  # Build tools
-  maven                  # Maven build tool
-  gradle                 # Gradle build tool
-  ant                    # Apache Ant (legacy projects)
-  
   # Language servers & development
   google-java-format     # Code formatter
   checkstyle             # Code style checker
