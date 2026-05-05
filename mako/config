@@ -1,0 +1,52 @@
+# Appearance
+font=Noto Sans 11
+background-color=#1e1e2e
+text-color=#cdd6f4
+border-color=#89b4fa
+border-size=2
+border-radius=10
+padding=15
+margin=10
+
+# Position and behavior
+anchor=top-right
+width=350
+height=150
+max-visible=5
+sort=-time
+layer=overlay
+default-timeout=5000
+ignore-timeout=1
+
+# Icons
+max-icon-size=48
+icon-path=/usr/share/icons/Papirus-Dark
+
+# Urgency levels
+[urgency=low]
+border-color=#6c7086
+background-color=#313244
+default-timeout=3000
+
+[urgency=normal]
+border-color=#89b4fa
+background-color=#1e1e2e
+default-timeout=5000
+
+[urgency=critical]
+border-color=#f38ba8
+background-color=#302d41
+text-color=#f38ba8
+default-timeout=0
+
+# App-specific overrides
+[app-name=volume]
+border-color=#a6e3a1
+default-timeout=2000
+
+[app-name=brightness]
+border-color=#f9e2af
+default-timeout=2000
+
+# Progress bar styling
+progress-color=over #313244

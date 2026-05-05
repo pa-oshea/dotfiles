@@ -119,6 +119,17 @@ docker run -it --rm archlinux:latest bash -c "
 "
 ```
 
+#### Arch Fish test
+
+```bash
+docker run -it --rm archlinux:latest bash -c "
+  pacman -Syu --noconfirm git curl sudo xz ca-certificates fish starship fzf ripgrep fd bat exa
+  useradd -m -s /bin/bash testuser
+  echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+  fish
+"
+```
+
 #### Step-by-step testing (any distro)
 
 ```bash

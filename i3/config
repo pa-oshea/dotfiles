@@ -1,5 +1,11 @@
+# i3 Configuration File
+
+#######################
+# BASIC CONFIGURATION #
+#######################
+
 # Set font
-font pango: JetBrainsMono Nerd Font 10
+font pango:JetBrainsMono Nerd Font 10
 
 # Set the mod key to the Windows key
 set $mod Mod4
@@ -8,47 +14,96 @@ set $mod Mod4
 workspace_layout default
 
 # Border settings for new windows
-new_window pixel 2
+default_border pixel 2
+default_floating_border pixel 2
+
+# Hide borders when only one window is visible
+hide_edge_borders smart
 
 # Gaps settings
 gaps inner 6
 gaps outer 3
+smart_gaps on
 
 # Floating windows configuration
 floating_modifier $mod
 
-# Keybindings
+exec_always --no-startup-id ~/.config/polybar/launch.sh
+
+#################
+# KEYBINDINGS   #
+#################
+
 # Launch terminal
 bindsym $mod+Return exec --no-startup-id alacritty
 
 # Window management
 bindsym $mod+q kill
-bindsym $mod+Shift+o exec --no-startup-id ~/.config/i3/scripts/blur-lock
+bindsym $mod+Shift+q kill
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
+# Exit i3
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# Layout management
 bindsym $mod+Shift+v split h
 bindsym $mod+v split v
 bindsym $mod+t layout tabbed
-bindsym $mod+s layout toggle split
+bindsym $mod+e layout toggle split
+bindsym $mod+s layout stacking
 bindsym $mod+f fullscreen toggle
-bindsym $mod+Shift+n exec --no-startup-id ~/.config/i3/scripts/empty_workspace
-bindsym $mod+p exec --no-startup-id /usr/local/bin/switch-audio-port
+
+# Floating toggle
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+
+# Focus parent/child
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
+
+# Scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+# Custom workspace management
+bindsym $mod+Shift+n exec --no-startup-id i3-msg workspace number $(i3-msg -t get_workspaces | jq -r 'map(.num) | max + 1')
+
+###################
+# APPLICATIONS    #
+###################
 
 # Application shortcuts
-bindsym $mod+w exec --no-startup-id /usr/bin/firefox
-bindsym $mod+Shift+f exec --no-startup-id /usr/bin/thunar
-bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
+bindsym $mod+w exec --no-startup-id firefox
+bindsym $mod+Shift+f exec --no-startup-id thunar
+bindsym $mod+Ctrl+f exec --no-startup-id alacritty -e ranger
 
-# Application menu
-bindsym $mod+d exec --no-startup-id rofi -show drun -theme ~/.config/rofi/launcher.rasi
-bindsym $mod+x exec --no-startup-id ~/.config/rofi/powermenu/powermenu.sh
-bindsym $mod+Shift+p exec --no-startup-id ~/.config/i3/scripts/power-profiles
+# Screenshots
+bindsym Print exec --no-startup-id scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved" "~/$(date +"%Y-%m-%d-%T")-screenshot.png"
+bindsym $mod+Print exec --no-startup-id scrot -s ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved" "~/$(date +"%Y-%m-%d-%T")-screenshot.png"
+bindsym Shift+Print exec --no-startup-id scrot -u ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved" "~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
-# Focus navigation
+# Application menu (using dmenu as fallback if rofi not available)
+bindsym $mod+d exec --no-startup-id "rofi -show drun || dmenu_run"
+bindsym $mod+Tab exec --no-startup-id "rofi -show window || i3-dmenu-desktop"
+
+# Power menu - simple shutdown/reboot options
+bindsym $mod+x exec --no-startup-id "echo -e 'Lock\nLogout\nReboot\nShutdown' | rofi -dmenu -p 'Power:' | xargs -I {} sh -c 'case {} in Lock) i3lock -c 1e1e2e ;; Logout) i3-msg exit ;; Reboot) systemctl reboot ;; Shutdown) systemctl poweroff ;; esac' || echo -e 'lock\nlogout\nreboot\nshutdown' | dmenu -p 'Power:' | xargs -I {} sh -c 'case {} in lock) i3lock -c 1e1e2e ;; logout) i3-msg exit ;; reboot) systemctl reboot ;; shutdown) systemctl poweroff ;; esac'"
+
+###################
+# FOCUS NAVIGATION #
+###################
+
+# Focus navigation (vim-like)
 bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
+
+# Alternative arrow keys
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
 
 # Move focused window
 bindsym $mod+Shift+h move left
@@ -56,7 +111,17 @@ bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
-# Workspace navigation
+# Alternative arrow keys for moving
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+#################
+# WORKSPACES    #
+#################
+
+# Workspace names with icons (optional - comment out if you prefer numbers)
 set $ws1 "1"
 set $ws2 "2"
 set $ws3 "3"
@@ -74,47 +139,197 @@ bindsym $mod+2 workspace $ws2
 bindsym $mod+3 workspace $ws3
 bindsym $mod+4 workspace $ws4
 bindsym $mod+5 workspace $ws5
-bindsym $mod+6 workspace $ws5
-bindsym $mod+7 workspace $ws5
-bindsym $mod+8 workspace $ws5
-bindsym $mod+9 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
 
-# move focused container to workspace
-bindsym $mod+Shift+1    move container to workspace  $ws1
-bindsym $mod+Shift+2    move container to workspace  $ws2
-bindsym $mod+Shift+3    move container to workspace  $ws3
-bindsym $mod+Shift+4    move container to workspace  $ws4
-bindsym $mod+Shift+5    move container to workspace  $ws5
-bindsym $mod+Shift+6    move container to workspace  $ws6
-bindsym $mod+Shift+7    move container to workspace  $ws7
-bindsym $mod+Shift+8    move container to workspace  $ws8
-bindsym $mod+Shift+9    move container to workspace  $ws9
-bindsym $mod+Shift+0    move container to workspace  $ws10
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
 
-# Brightness and volume controls
-bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh brightness_up
-bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/volume_brightness.sh brightness_down
-bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master 1%+ && pkill -RTMIN+1 i3blocks
-bindsym XF86AudioLowerVolume exec --no-startup-id amixer -D pulse sset Master 1%- && pkill -RTMIN+1 i3blocks
+# Workspace navigation
+bindsym $mod+Ctrl+Right workspace next_on_output
+bindsym $mod+Ctrl+Left workspace prev_on_output
+bindsym $mod+Ctrl+l workspace next_on_output
+bindsym $mod+Ctrl+h workspace prev_on_output
+
+# Move workspace to different output
+bindsym $mod+Ctrl+Shift+Right move workspace to output right
+bindsym $mod+Ctrl+Shift+Left move workspace to output left
+bindsym $mod+Ctrl+Shift+Up move workspace to output up
+bindsym $mod+Ctrl+Shift+Down move workspace to output down
+
+###################
+# MEDIA CONTROLS  #
+###################
+
+# Brightness controls
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
+
+# Volume controls
+bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master 5%+ && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioLowerVolume exec --no-startup-id amixer -D pulse sset Master 5%- && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioMute exec --no-startup-id amixer sset Master toggle && killall -USR1 i3blocks
-bindsym XF86AudioMicMute exec amixer sset Capture toggle
+bindsym XF86AudioMicMute exec --no-startup-id amixer sset Capture toggle
 
-# Media controls
-bindsym XF86AudioPlay exec --no-startup-id playerctl play
-bindsym XF86AudioPause exec --no-startup-id playerctl pause
+# Alternative volume controls (for keyboards without media keys)
+bindsym $mod+F11 exec --no-startup-id amixer -D pulse sset Master 5%+ && pkill -RTMIN+1 i3blocks
+bindsym $mod+F10 exec --no-startup-id amixer -D pulse sset Master 5%- && pkill -RTMIN+1 i3blocks
+bindsym $mod+F9 exec --no-startup-id amixer sset Master toggle && killall -USR1 i3blocks
+
+# Media player controls
+bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+bindsym XF86AudioPause exec --no-startup-id playerctl play-pause
 bindsym XF86AudioNext exec --no-startup-id playerctl next
 bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 
-# Autostart applications
-exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-exec --no-startup-id sleep 1 && feh --bg-scale ~/dev/dotfiles/i3/wallpapers/landscape.jpg
-exec --no-startup-id xset s 480 dpms 600 600 600
-exec --no-startup-id picom --config ~/.config/picom/picom.conf -b
-exec --no-startup-id /bin/caffeine
-exec --no-startup-id /usr/bin/dunst
-exec_always --no-startup-id ~/.config/polybar/launch.sh
+# Alternative media controls
+bindsym $mod+F8 exec --no-startup-id playerctl play-pause
+bindsym $mod+F7 exec --no-startup-id playerctl previous
+bindsym $mod+F6 exec --no-startup-id playerctl next
 
-# Colors configuration
+##################
+# RESIZE MODE    #
+##################
+
+# Resize mode
+bindsym $mod+r mode "resize"
+mode "resize" {
+    # Vim-like keys for resizing
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize grow height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+
+    # Arrow keys for resizing
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    # Fine-grained resizing
+    bindsym Shift+h resize shrink width 1 px or 1 ppt
+    bindsym Shift+j resize grow height 1 px or 1 ppt
+    bindsym Shift+k resize shrink height 1 px or 1 ppt
+    bindsym Shift+l resize grow width 1 px or 1 ppt
+
+    # Exit resize mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+    bindsym q mode "default"
+}
+
+#####################
+# FLOATING WINDOWS  #
+#####################
+
+# Floating window rules
+for_window [class="Arandr"] floating enable sticky enable border normal
+for_window [class="Blueman-manager"] floating enable
+for_window [class="Pavucontrol"] floating enable
+for_window [class="Lxappearance"] floating enable sticky enable border normal
+for_window [class="Nitrogen"] floating enable sticky enable border normal
+for_window [class="Thunar"] floating enable resize set 1200 800
+for_window [class="feh"] floating enable
+for_window [class="mpv"] floating enable
+for_window [title="alsamixer"] floating enable border pixel 1
+for_window [class="calamares"] floating enable border normal
+for_window [class="Clipgrab"] floating enable
+for_window [title="File Transfer*"] floating enable
+for_window [class="Galculator"] floating enable border pixel 1
+for_window [class="GParted"] floating enable border normal
+for_window [title="i3_help"] floating enable sticky enable border normal
+for_window [class="Lightdm-settings"] floating enable
+for_window [class="Pamac-manager"] floating enable
+for_window [class="Qtconfig-qt4"] floating enable sticky enable border normal
+for_window [class="Simple-scan"] floating enable border normal
+for_window [class="(?i)System-config-printer.py"] floating enable border normal
+for_window [class="Timeset-gui"] floating enable border normal
+for_window [class="(?i)virtualbox"] floating enable border normal
+for_window [class="Xfburn"] floating enable
+
+# Sticky floating windows
+for_window [instance="file_progress"] sticky enable
+for_window [class="info|Mate-color-select|gcolor2|timesup|QtPass|GtkFileChooserDialog"] sticky enable
+
+######################
+# WORKSPACE ASSIGNMENTS
+######################
+
+# Assign applications to workspaces
+assign [class="Firefox"] $ws2
+assign [class="Code"] $ws3
+assign [class="Discord"] $ws9
+assign [class="Spotify"] $ws10
+
+# Auto-float specific windows
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [title="Preferences$"] floating enable
+
+###################
+# AUTOSTART APPS  #
+###################
+
+# Authentication agent
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+# Wallpaper (using feh)
+exec --no-startup-id feh --bg-scale ~/.config/wallpaper.jpg || feh --bg-fill /usr/share/pixmaps/archlinux-logo.png
+
+# Screen settings
+exec --no-startup-id xset s 480 dpms 600 600 600
+
+# Compositor (optional - uncomment if you have picom installed)
+exec --no-startup-id picom -b
+
+# System utilities
+exec --no-startup-id nm-applet
+exec --no-startup-id blueman-applet
+
+# Status bar - using i3status as default (you can replace with polybar later)
+# bar {
+#     status_command i3status
+#     position top
+#     colors {
+#         background $base
+#         statusline $text
+#         separator $overlay0
+#
+#         focused_workspace  $blue     $blue     $base
+#         active_workspace   $overlay0 $overlay0 $text
+#         inactive_workspace $base     $base     $text
+#         urgent_workspace   $peach    $peach    $base
+#         binding_mode       $red      $red      $base
+#     }
+# }
+
+# Auto-lock (optional - uncomment and adjust time as desired)
+# exec --no-startup-id xss-lock -- i3lock -c 1e1e2e
+
+# Notification daemon (optional - uncomment if you have dunst installed)
+# exec --no-startup-id dunst
+
+# Clipboard manager (optional - uncomment if you have parcellite installed)
+# exec --no-startup-id parcellite
+
+##################
+# COLOR SCHEME   #
+##################
+
+# Catppuccin Mocha color palette
 set $rosewater #f5e0dc
 set $flamingo #f2cdcd
 set $pink #f5c2e7
@@ -142,36 +357,10 @@ set $base #1e1e2e
 set $mantle #181825
 set $crust #11111b
 
-# Window colors
-client.focused $blue $base $text $blue $blue
-client.focused_inactive $overlay0 $base $text $overlay0 $overlay0
-client.unfocused $overlay0 $base $text $overlay0 $overlay0
-client.urgent $peach $base $peach $overlay0 $peach
-client.placeholder $overlay0 $base $text $overlay0 $overlay0
-client.background $base
-
-bindcode $mod+27 mode "resize"
-# resize window (you can also use the mouse for that)
-mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
-
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
-        bindcode 44 resize shrink width 10 px or 10 ppt
-        bindcode 45 resize grow height 10 px or 10 ppt
-        bindcode 46 resize shrink height 10 px or 10 ppt
-        bindcode 47 resize grow width 10 px or 10 ppt
-
-        # same bindings, but for the arrow keys
-        bindcode 113 resize shrink width 10 px or 10 ppt
-        bindcode 116 resize grow height 10 px or 10 ppt
-        bindcode 111 resize shrink height 10 px or 10 ppt
-        bindcode 114 resize grow width 10 px or 10 ppt
-
-        # back to normal: Enter or Escape or $mod+r
-        bindcode 36 mode "default"
-        bindcode 9 mode "default"
-        bindcode $mod+27 mode "default"
-}
+# Window colors                border      background  text        indicator   child_border
+client.focused              $blue       $base       $text       $blue       $blue
+client.focused_inactive     $overlay0   $base       $text       $overlay0   $overlay0
+client.unfocused           $overlay0   $base       $text       $overlay0   $overlay0
+client.urgent              $peach      $base       $peach      $overlay0   $peach
+client.placeholder         $overlay0   $base       $text       $overlay0   $overlay0
+client.background          $base

@@ -1,106 +1,52 @@
-# Essential CLI utilities - the foundation for all profiles
-# Usage: nix-env -if ~/.dotfiles/nix/packages/core.nix
-
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs }:
 
 with pkgs; [
-  # Shell essentials
-  zsh                    # Z shell
-  starship               # Cross-shell prompt
+  # --- SHELL UI (Managed by Nix) ---
+  starship        # Cross-shell prompt
+
+  # --- FILE & SEARCH (Modern Replacements) ---
+  fd ripgrep bat eza fzf zoxide
   
-  # File operations (modern replacements)
-  fd                     # Modern find replacement
-  ripgrep                # Modern grep replacement
-  bat                    # Modern cat with syntax highlighting
-  eza                    # Modern ls with git integration
+  # --- TEXT & DATA ---
+  jq yq-go glow fx
   
-  # Navigation & search
-  fzf                    # Fuzzy finder
-  zoxide                 # Smart cd replacement
+  # --- SYSTEM MONITORING ---
+  bottom btop dust procs neofetch fastfetch
   
-  # Text processing & viewing
-  jq                     # JSON processor
-  yq-go                  # YAML processor
-  glow                   # Markdown viewer
-  fx                     # Interactive JSON viewer
+  # --- NETWORK TOOLS ---
+  curl httpie netcat
   
-  # System monitoring
-  bottom                 # Modern htop replacement (btm command)
-  btop                   # Alternative modern htop
-  dust                   # Modern du replacement
-  procs                  # Modern ps replacement
-  neofetch               # System information tool
-  fastfetch               # System information tool
+  # --- ARCHIVE HANDLING ---
+  unzip gzip
   
-  # Network tools
-  curl                   # HTTP client
-  httpie                 # User-friendly HTTP client
-  netcat                 # Network swiss army knife
+  # --- VERSION CONTROL ---
+  git git-lfs lazygit delta git-absorb gh
   
-  # Archive handling
-  unzip                  # ZIP extraction
-  gzip                   # GNU zip
+  # --- TERMINAL & EDITING ---
+  tmux tmux-sessionizer neovim luarocks
   
-  # Clipboard utilities
-  xsel                   # X11 clipboard tool
-  xclip                  # Alternative clipboard tool
+  # --- FILE MANAGEMENT ---
+  tree yazi rsync
   
-  # Version control
-  git                    # Version control system
-  git-lfs                # Large file storage
-  lazygit                # Git TUI
-  delta                  # Better git diff viewer
-  git-absorb             # Automatic git commit fixups
-  gh                     # GitHub CLI
+  # --- DEV WORKFLOW ---
+  direnv just mise gum
   
-  # Terminal & editing
-  tmux                   # Terminal multiplexer
-  tmux-sessionizer       # Sessionizer for tmux
-  neovim                 # Modern text editor
+  # --- ANALYSIS & BENCHMARKING ---
+  tokei hyperfine atac
   
-  # File management
-  tree                   # Directory tree viewer
-  yazi                   # Terminal file manager
-  rsync                  # File synchronization
+  # --- CONTAINER & K8S CLIENTS (CLI tools only) ---
+  dive lazydocker kubectl helm k9s
   
-  # Development workflow
-  direnv                 # Automatic environment loading
-  just                   # Command runner (better than make)
-  mise                   # Runtime version manager
-  gum                    # Beautiful shell script components
+  # --- LINTING ---
+  shellcheck yamllint
   
-  # Code analysis & benchmarking
-  tokei                  # Code statistics
-  hyperfine              # Command-line benchmarking
+  # --- DATABASE ---
+  sqlite
   
-  # API & testing tools
-  atac                   # API testing TUI
+  # --- HELP & DOCS ---
+  which tealdeer navi
   
-  # Container tools
-  docker                 # Container platform
-  docker-compose         # Container orchestration
-  dive                   # Docker image analyzer
-  lazydocker             # Docker TUI
-  
-  # Kubernetes tools
-  kubectl                # Kubernetes CLI
-  helm                   # Kubernetes package manager
-  k9s                    # Kubernetes TUI
-  
-  # Linting & code quality
-  shellcheck             # Shell script linter
-  yamllint               # YAML linter
-  
-  # Database tools
-  sqlite                 # SQLite CLI
-  
-  # Documentation & help
-  which                  # Command location finder
-  tealdeer               # Fast man pages (tldr)
-  navi                   # Interactive cheatsheet tool
-  
-  # Utilities
-  watch                  # Execute programs periodically
-  entr                   # Run commands when files change
-  parallel               # Execute jobs in parallel
+  # --- UTILITIES ---
+  watch entr parallel
+  stdenv.cc.cc.lib # Essential for Neovim Treesitter
 ]

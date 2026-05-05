@@ -9,9 +9,8 @@ Vagrant.configure("2") do |config|
   # Set VM hostname
   config.vm.hostname = "arch-vagrant-i3"
   
-  # Optional: Share your dotfiles directory for easy testing
-  # Uncomment the line below to mount your dotfiles repo into the VM
-  config.vm.synced_folder ".", "/home/testuser/.dotfiles", type: "9p", accessmode: "mapped"
+  # Share your dotfiles directory for easy testing
+  config.vm.synced_folder "~/.dotfiles", "/home/vagrant/.dotfiles", type: "9p", accessmode: "mapped"
   
   # Configure libvirt provider for optimal performance
   config.vm.provider "libvirt" do |libvirt|
@@ -111,7 +110,8 @@ Vagrant.configure("2") do |config|
       neofetch \
       tree \
       which \
-      sudo
+      sudo \
+      jq
     
     echo "✅ Base system packages installed"
   SHELL
@@ -162,10 +162,8 @@ Vagrant.configure("2") do |config|
     # Core GUI applications for X11/i3
     pacman -S --noconfirm --needed \
       rofi \
+      polybar \
       alacritty \
-      terminator \
-      rxvt-unicode \
-      dolphin \
       firefox \
       thunar \
       scrot \
@@ -173,18 +171,21 @@ Vagrant.configure("2") do |config|
       dunst \
       picom \
       feh \
-      nitrogen
+      nitrogen \
+      ranger \
+      pavucontrol
     
     # Optional: Install additional useful tools
     pacman -S --noconfirm --needed \
       networkmanager \
       network-manager-applet \
+      gnome-calendar \
       bluez \
       bluez-utils \
       brightnessctl \
       playerctl \
-      pavucontrol \
       arandr \
+      blueman \
       lxappearance
     
     echo "✅ GUI applications installed"
@@ -210,7 +211,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", name: "fonts-themes", inline: <<-SHELL
     echo "🎭 Installing fonts and themes..."
     
-    # Essential fonts
+    # Essential fonts including JetBrains Mono Nerd Font
     pacman -S --noconfirm --needed \
       ttf-dejavu \
       ttf-liberation \
@@ -218,7 +219,9 @@ Vagrant.configure("2") do |config|
       noto-fonts-emoji \
       ttf-font-awesome \
       ttf-fira-code \
-      ttf-fira-sans
+      ttf-fira-sans \
+      ttf-jetbrains-mono \
+      ttf-jetbrains-mono-nerd
     
     # Optional: Additional fonts for better coverage
     pacman -S --noconfirm --needed \
@@ -238,38 +241,19 @@ Vagrant.configure("2") do |config|
     echo "✅ Fonts and themes installed"
   SHELL
   
-  # User setup and configuration
-  config.vm.provision "shell", name: "user-setup", inline: <<-SHELL
-    echo "👤 Setting up user account..."
+  # Vagrant user setup and configuration
+  config.vm.provision "shell", name: "vagrant-user-setup", inline: <<-SHELL
+    echo "👤 Setting up vagrant user for desktop environment..."
     
-    # Create or ensure test user exists with proper groups
-    if ! id "testuser" &>/dev/null; then
-      useradd -m -G wheel,audio,video,input,storage -s /bin/bash testuser
-      echo "testuser:password" | chpasswd
-      echo "✅ User 'testuser' created with password 'password'"
-    else
-      echo "ℹ️ User 'testuser' already exists"
-      # Add to groups if not already there
-      usermod -aG wheel,audio,video,input,storage testuser
-      echo "testuser:password" | chpasswd
-      echo "✅ User 'testuser' password updated"
-    fi
+    # Ensure vagrant user is in all necessary groups
+    usermod -aG wheel,audio,video,input,storage vagrant
+    echo "✅ Added vagrant user to necessary groups"
     
-    # Fix ownership of home directory and contents
-    chown -R testuser:testuser /home/testuser
-    chmod 755 /home/testuser
-    echo "✅ Fixed home directory ownership"
-    
-    # Configure sudo for wheel group
-    if ! grep -q "^%wheel ALL=(ALL) NOPASSWD: ALL" /etc/sudoers; then
-      echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-      echo "✅ Passwordless sudo configured for wheel group"
-    fi
-    
-    # Set up basic shell and X11 session for testuser
-    sudo -u testuser bash -c '
+    # Set up basic shell and X11 session for vagrant user
+    sudo -u vagrant bash -c '
       # Create basic directories
       mkdir -p ~/.config ~/.local/bin ~/.local/share
+      mkdir -p ~/.config/i3 ~/.config/polybar ~/.config/rofi ~/.config/alacritty ~/.config/dunst ~/.config/picom
       echo "✅ Created user directories"
       
       # Create basic .xinitrc to start i3
@@ -281,7 +265,7 @@ Vagrant.configure("2") do |config|
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
 # Set background (fallback)
-xsetroot -solid "#2e3440" &
+xsetroot -solid "#1e1e2e" &
 
 # Start compositor for transparency and effects
 picom -b &
@@ -302,7 +286,7 @@ EOF
       chmod +x ~/.xinitrc
       echo "✅ Created .xinitrc"
       
-      # Create minimal .Xresources
+      # Create minimal .Xresources with Catppuccin colors
       cat > ~/.Xresources << "EOF"
 ! Basic X11 resources
 Xft.dpi: 96
@@ -311,24 +295,129 @@ Xft.rgba: rgb
 Xft.hinting: true
 Xft.hintstyle: hintslight
 
+! Terminal colors - Catppuccin Mocha
+*.background: #1e1e2e
+*.foreground: #cdd6f4
+*.color0:     #45475a
+*.color1:     #f38ba8
+*.color2:     #a6e3a1
+*.color3:     #f9e2af
+*.color4:     #89b4fa
+*.color5:     #f5c2e7
+*.color6:     #94e2d5
+*.color7:     #bac2de
+*.color8:     #585b70
+*.color9:     #f38ba8
+*.color10:    #a6e3a1
+*.color11:    #f9e2af
+*.color12:    #89b4fa
+*.color13:    #f5c2e7
+*.color14:    #94e2d5
+*.color15:    #a6adc8
+
 ! URxvt settings
-URxvt.font: xft:Fira Code:size=12
-URxvt.background: #2e3440
-URxvt.foreground: #d8dee9
+URxvt.font: xft:JetBrains Mono:size=12
 URxvt.scrollBar: false
 EOF
-      echo "✅ Created .Xresources"
+      echo "✅ Created .Xresources with Catppuccin theme"
+      
+      # Create basic alacritty config
+      cat > ~/.config/alacritty/alacritty.toml << "EOF"
+[font]
+size = 12
+
+[font.normal]
+family = "JetBrains Mono"
+style = "Regular"
+
+[colors.primary]
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+
+[colors.normal]
+black   = "#45475a"
+red     = "#f38ba8"
+green   = "#a6e3a1"
+yellow  = "#f9e2af"
+blue    = "#89b4fa"
+magenta = "#f5c2e7"
+cyan    = "#94e2d5"
+white   = "#bac2de"
+
+[colors.bright]
+black   = "#585b70"
+red     = "#f38ba8"
+green   = "#a6e3a1"
+yellow  = "#f9e2af"
+blue    = "#89b4fa"
+magenta = "#f5c2e7"
+cyan    = "#94e2d5"
+white   = "#a6adc8"
+EOF
+      echo "✅ Created Alacritty config"
+      
+      # Create a basic i3 config that will be replaced by dotfiles
+      cat > ~/.config/i3/config << "EOF"
+# Basic i3 config - will be replaced by your dotfiles
+set $mod Mod4
+font pango:JetBrains Mono 10
+
+# Start a terminal
+bindsym $mod+Return exec alacritty
+
+# Kill focused window
+bindsym $mod+Shift+q kill
+
+# Start dmenu
+bindsym $mod+d exec dmenu_run
+
+# Change focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+
+# Reload the configuration file
+bindsym $mod+Shift+c reload
+# Restart i3 inplace
+bindsym $mod+Shift+r restart
+
+# Exit i3
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# Workspaces
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+
+# Colors
+set $bg #1e1e2e
+set $fg #cdd6f4
+set $blue #89b4fa
+
+client.focused $blue $bg $fg $blue $blue
+EOF
+      echo "✅ Created basic i3 config (replace with your dotfiles)"
     '
     
-    # Double-check permissions are correct
-    chown -R testuser:testuser /home/testuser
-    chmod 644 /home/testuser/.xinitrc /home/testuser/.Xresources
-    chmod +x /home/testuser/.xinitrc
+    # Set proper ownership for vagrant user files
+    chown -R vagrant:vagrant /home/vagrant
+    chmod 755 /home/vagrant
+    chmod +x /home/vagrant/.xinitrc
     
-    echo "✅ User configuration completed"
+    echo "✅ Vagrant user configuration completed"
   SHELL
   
-  # Service configuration
+  # Service configuration with auto-login for vagrant user
   config.vm.provision "shell", name: "services", inline: <<-SHELL
     echo "⚙️ Configuring system services..."
     
@@ -340,47 +429,39 @@ EOF
     # Create LightDM config directory
     mkdir -p /etc/lightdm/lightdm.conf.d
     
-    # Configure LightDM with better defaults (no auto-login initially)
-    cat > /etc/lightdm/lightdm.conf.d/50-myconfig.conf << 'EOF'
+    # Configure LightDM with auto-login for vagrant user
+    cat > /etc/lightdm/lightdm.conf.d/50-vagrant-autologin.conf << 'EOF'
 [Seat:*]
 session-wrapper=/etc/lightdm/Xsession
 greeter-session=lightdm-gtk-greeter
+autologin-user=vagrant
+autologin-user-timeout=0
 allow-guest=false
 
 [LightDM]
 minimum-vt=7
 EOF
     
-    # Configure LightDM GTK greeter
+    # Configure LightDM GTK greeter with Catppuccin theme
     mkdir -p /etc/lightdm
     cat > /etc/lightdm/lightdm-gtk-greeter.conf << 'EOF'
 [greeter]
-theme-name=Adwaita
+theme-name=Adwaita-dark
 icon-theme-name=Adwaita
-background=#2e3440
+background=#1e1e2e
 position=50%,center 50%,center
 EOF
-    
-    # Create lightdm user and set proper permissions
-    if ! id "lightdm" &>/dev/null; then
-      useradd -r -g lightdm -d /var/lib/lightdm -s /usr/bin/nologin lightdm
-    fi
     
     # Ensure proper directories and permissions exist
     mkdir -p /var/lib/lightdm
     mkdir -p /var/log/lightdm
     mkdir -p /run/lightdm
     
-    chown -R lightdm:lightdm /var/lib/lightdm
-    chown -R lightdm:lightdm /var/log/lightdm
-    chmod 750 /var/lib/lightdm
-    chmod 750 /var/log/lightdm
-    
     # Set proper permissions on config files
-    chmod 644 /etc/lightdm/lightdm.conf.d/50-myconfig.conf
+    chmod 644 /etc/lightdm/lightdm.conf.d/50-vagrant-autologin.conf
     chmod 644 /etc/lightdm/lightdm-gtk-greeter.conf
     
-    echo "✅ Services configured"
+    echo "✅ Services configured with auto-login for vagrant user"
   SHELL
   
   # Final setup and information
@@ -402,34 +483,36 @@ EOF
     echo "🎉 ==============================================="
     echo ""
     echo "📋 VM Information:"
-    echo "   • Hostname: arch-dotfiles-test"
-    echo "   • Username: testuser"
-    echo "   • Password: password"
+    echo "   • Hostname: arch-vagrant-i3"
+    echo "   • Username: vagrant (auto-login enabled)"
     echo "   • Desktop: i3 (X11)"
+    echo "   • Dotfiles location: ~/.dotfiles"
     echo ""
     echo "🚀 Next Steps:"
     echo "   1. Reboot the VM: vagrant reload"
-    echo "   2. Access GUI: virt-viewer arch-dotfiles-test_default"
-    echo "   3. Auto-login as testuser"
-    echo "   4. Map your dotfiles config to ~/.config/i3/"
+    echo "   2. Access GUI: vagrant ssh -- -X (for X forwarding)"
+    echo "   3. Or use virt-viewer for full desktop"
+    echo "   4. Copy your dotfiles: cp ~/.dotfiles/i3/config ~/.config/i3/"
+    echo "   5. Copy polybar config: cp ~/.dotfiles/polybar/config ~/.config/polybar/"
     echo ""
-    echo "💡 Useful Commands:"
-    echo "   • Clone your dotfiles: git clone <your-repo> ~/dotfiles"
-    echo "   • Default terminal: alacritty"
-    echo "   • App launcher: rofi (Mod+d)"
-    echo "   • Lock screen: i3lock"
+    echo "💡 Your dotfiles are mapped to:"
+    echo "   • Host directory → VM: ~/.dotfiles"
+    echo "   • Any changes on host are immediately visible in VM"
     echo ""
-    echo "📁 Config locations for your dotfiles:"
+    echo "📁 Standard config locations:"
     echo "   • i3 config: ~/.config/i3/config"
-    echo "   • i3status: ~/.config/i3status/config"
+    echo "   • polybar config: ~/.config/polybar/config"
     echo "   • rofi: ~/.config/rofi/"
-    echo "   • alacritty: ~/.config/alacritty/"
+    echo "   • alacritty: ~/.config/alacritty/alacritty.toml"
     echo "   • dunst: ~/.config/dunst/"
     echo "   • picom: ~/.config/picom/"
     echo ""
-    echo "🔄 Rebooting to complete setup..."
+    echo "🔧 Quick setup commands for your dotfiles:"
+    echo "   cd ~/.dotfiles"
+    echo "   cp i3/config ~/.config/i3/"
+    echo "   cp polybar/config ~/.config/polybar/"
+    echo "   ~/.config/polybar/launch.sh"
+    echo "   i3-msg reload"
+    echo ""
   SHELL
-  
-  # Auto-reboot after provisioning to ensure all services start properly
-  # config.vm.provision "shell", name: "reboot", inline: "shutdown -r +1", run: "always"
 end

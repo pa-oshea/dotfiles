@@ -1,0 +1,71 @@
+{
+  "layer": "top",
+  "modules-left": [
+    "sway/workspaces"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "battery",
+    "pulseaudio",
+    "sway/language",
+    "clock"
+  ],
+  "sway/workspaces": {
+    "format": "●",
+    "disable-scroll": true,
+    "all-outputs": true
+  },
+  "battery": {
+    "format": "{icon} {capacity}%",
+    "tooltip-format": "{timeTo} | {power}w",
+    "format-icons": [
+      "󰂃",
+      "󰂎",
+      "󰁺",
+      "󰁻",
+      "󰁼",
+      "󰁽",
+      "󰁾",
+      "󰁿",
+      "󰂀",
+      "󰂁",
+      "󰂂",
+      "󰁹"
+    ],
+    "states": {
+      "critical": 10,
+      "warning": 25,
+      "low": 50,
+      "full": 100
+    }
+  },
+  "pulseaudio": {
+    "format": "{format_source}{icon} {volume}%",
+    "format-muted": "{format_source}󰝟",
+    "format-source": "<span color='#f38ba8'>󰍬 on</span>  ",
+    "format-source-muted": "",
+    "format-icons": {
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾",
+        "󱄠"
+      ]
+    },
+    "tooltip": false,
+    "on-click": "pavucontrol",
+    "on-click-right": "pamixer --default-source --toggle-mute"
+  },
+  "sway/language": {
+    "format": "󰌌 {}",
+    "tooltip": false,
+    "on-click": "swaymsg input type:keyboard xkb_switch_layout next"
+  },
+  "clock": {
+    "timezone": "Europe/Dublin",
+    "format": "󰅐 {:%H:%M}",
+    "tooltip": true,
+    "tooltip-format": "{:%e %B, %A}",
+    "on-click": "foot --hold when ci"
+  }
+}

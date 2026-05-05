@@ -1,0 +1,372 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Use Arch Linux box that supports libvirt
+  config.vm.box = "generic/arch"
+  config.vm.box_check_update = true
+  
+  # Set VM hostname
+  config.vm.hostname = "arch-vagrant-sway"
+  
+  # Share your dotfiles directory for easy testing
+  config.vm.synced_folder "~/.dotfiles", "/home/vagrant/.dotfiles", type: "9p", accessmode: "mapped"
+
+  
+  # Configure libvirt provider for optimal performance
+  config.vm.provider "libvirt" do |libvirt|
+    # Resource allocation (adjust based on your host specs)
+    libvirt.memory = 12288  # 12GB RAM
+    libvirt.cpus = 8        # 8 CPU cores
+    
+    # VM identification
+    libvirt.title = "Arch Linux Sway Dotfiles Test Environment"
+    libvirt.description = "Arch Linux VM for testing dotfiles with Sway (Wayland)"
+    
+    # Graphics and display configuration for Wayland
+    libvirt.graphics_type = "spice"
+    libvirt.graphics_autoport = "yes"
+    libvirt.graphics_passwd = nil  # No password for easier access
+    libvirt.video_type = "virtio"
+    libvirt.video_vram = 131072    # 128MB video memory for higher resolutions
+    libvirt.video_accel3d = "yes"
+    
+    # Enable OpenGL acceleration for Wayland
+    libvirt.graphics_gl = "yes"
+    
+    # Audio configuration
+    libvirt.sound_type = "ich9"
+    
+    # Spice agent for better desktop integration
+    libvirt.channel :type => 'spicevmc', :target_name => 'com.redhat.spice.0', :target_type => 'virtio'
+    libvirt.channel :type => 'unix', :target_name => 'org.qemu.guest_agent.0', :target_type => 'virtio'
+    
+    # Performance optimizations
+    libvirt.nested = true                    # Enable nested virtualization
+    libvirt.cpu_mode = 'host-passthrough'   # Best CPU performance
+    libvirt.machine_type = "q35"            # Modern machine type
+    libvirt.disk_bus = "virtio"             # Faster disk I/O
+    libvirt.nic_model_type = "virtio"       # Faster network
+    
+    # Random number generator for better entropy
+    libvirt.random :model => 'random'
+    
+    # Additional storage if needed (uncomment to add a 50GB data disk)
+    # libvirt.storage :file, :size => '50G', :type => 'qcow2', :bus => 'virtio'
+    
+    # USB redirection for better hardware support
+    libvirt.usb_controller :model => 'nec-xhci', :ports => 8
+    
+    # Memory balloon for dynamic memory management
+    libvirt.memorybacking :access, :mode => "shared"
+  end
+  
+  # Pre-provision setup (runs before main provisioning)
+  config.vm.provision "shell", name: "pre-setup", inline: <<-SHELL
+    echo "🔧 Pre-setup: Optimizing pacman and fixing keyrings..."
+    
+    # Optimize pacman configuration
+    sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 10/' /etc/pacman.conf
+    sed -i 's/#Color/Color/' /etc/pacman.conf
+    sed -i 's/#VerbosePkgLists/VerbosePkgLists/' /etc/pacman.conf
+    
+    # Enable multilib repository for broader package support
+    if ! grep -q "\\[multilib\\]" /etc/pacman.conf; then
+      echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+    fi
+    
+    # Fix keyring issues (common Arch Linux VM problem)
+    pacman-key --init
+    pacman-key --populate archlinux
+    pacman -Sy --noconfirm archlinux-keyring
+    
+    # Update package database
+    pacman -Sy
+  SHELL
+  
+  # Main system provisioning
+  config.vm.provision "shell", name: "system-setup", inline: <<-SHELL
+    echo "📦 Installing base system packages..."
+    
+    # System update with retry logic
+    for i in {1..3}; do
+      if pacman -Syu --noconfirm; then
+        break
+      else
+        echo "Update attempt $i failed, retrying..."
+        sleep 5
+      fi
+    done
+    
+    # Essential development tools
+    pacman -S --noconfirm --needed \
+      base-devel \
+      git \
+      wget \
+      curl \
+      unzip \
+      vim \
+      nano \
+      htop \
+      neofetch \
+      tree \
+      which \
+      sudo \
+      jq
+    
+    echo "✅ Base system packages installed"
+  SHELL
+  
+  # Wayland and Sway installation
+  config.vm.provision "shell", name: "wayland-sway", inline: <<-SHELL
+    echo "🌊 Installing Wayland and Sway..."
+    
+    # Core Wayland components
+    pacman -S --noconfirm --needed \
+      wayland \
+      wayland-protocols \
+      wlroots \
+      mesa \
+      mesa-utils \
+      libva-mesa-driver \
+      vulkan-mesa-driver
+    
+    # Sway window manager and essential components
+    pacman -S --noconfirm --needed \
+      sway \
+      swaylock \
+      swayidle \
+      swaybg \
+      xorg-xwayland
+    
+    # Display manager with Wayland support
+    pacman -S --noconfirm --needed \
+      greetd \
+      greetd-tuigreet
+    
+    # SPICE guest tools and VM integration
+    pacman -S --noconfirm --needed \
+      spice-vdagent \
+      qemu-guest-agent
+    
+    echo "✅ Wayland and Sway installed"
+  SHELL
+  
+  # Essential GUI applications for Wayland
+  config.vm.provision "shell", name: "wayland-apps", inline: <<-SHELL
+    echo "🎨 Installing Wayland-compatible GUI applications..."
+    
+    # Core Wayland applications
+    pacman -S --noconfirm --needed \
+      wofi \
+      waybar \
+      foot \
+      alacritty \
+      firefox \
+      thunar \
+      grim \
+      slurp \
+      wl-clipboard \
+      mako \
+      imv \
+      mpv \
+      ranger \
+      pavucontrol
+    
+    # Additional useful tools for Wayland
+    pacman -S --noconfirm --needed \
+      networkmanager \
+      network-manager-applet \
+      bluez \
+      bluez-utils \
+      brightnessctl \
+      playerctl \
+      wdisplays \
+      blueman \
+      lxappearance \
+      kanshi \
+      gammastep \
+      xdg-desktop-portal-wlr \
+      xdg-desktop-portal-gtk
+    
+    echo "✅ Wayland applications installed"
+  SHELL
+  
+  # Audio system setup
+  config.vm.provision "shell", name: "audio-setup", inline: <<-SHELL
+    echo "🔊 Setting up audio system..."
+    
+    # Install PipeWire audio stack (works great with Wayland)
+    pacman -S --noconfirm --needed \
+      pipewire \
+      pipewire-pulse \
+      pipewire-alsa \
+      pipewire-jack \
+      wireplumber \
+      alsa-utils
+    
+    echo "✅ Audio system configured"
+  SHELL
+  
+  # Fonts and theming
+  config.vm.provision "shell", name: "fonts-themes", inline: <<-SHELL
+    echo "🎭 Installing fonts and themes..."
+    
+    # Essential fonts including JetBrains Mono Nerd Font
+    pacman -S --noconfirm --needed \
+      ttf-dejavu \
+      ttf-liberation \
+      noto-fonts \
+      noto-fonts-emoji \
+      ttf-font-awesome \
+      ttf-fira-code \
+      ttf-fira-sans \
+      ttf-jetbrains-mono \
+      ttf-jetbrains-mono-nerd
+    
+    # Additional fonts for better coverage
+    pacman -S --noconfirm --needed \
+      adobe-source-code-pro-fonts \
+      inter-font \
+      cantarell-fonts
+    
+    # GTK themes and icons (still used by some Wayland apps)
+    pacman -S --noconfirm --needed \
+      gtk3 \
+      gtk4 \
+      adwaita-icon-theme \
+      papirus-icon-theme \
+      arc-gtk-theme \
+      arc-icon-theme
+    
+    echo "✅ Fonts and themes installed"
+  SHELL
+  
+  # Vagrant user setup and configuration
+  config.vm.provision "shell", name: "vagrant-user-setup", inline: <<-SHELL
+    echo "👤 Setting up vagrant user for Sway environment..."
+    
+    # Ensure vagrant user is in all necessary groups
+    usermod -aG wheel,audio,video,input,storage vagrant
+    echo "✅ Added vagrant user to necessary groups"
+    
+    # Set up basic shell and Wayland session for vagrant user
+    sudo -u vagrant bash -c '
+      # Create basic directories
+      mkdir -p ~/.config ~/.local/bin ~/.local/share
+      mkdir -p ~/.config/sway ~/.config/waybar ~/.config/wofi ~/.config/foot ~/.config/alacritty ~/.config/mako ~/.config/kanshi
+      echo "✅ Created user directories"
+    '
+    
+    # Set proper ownership for vagrant user files
+    chown -R vagrant:vagrant /home/vagrant
+    chmod 755 /home/vagrant
+    
+    echo "✅ Vagrant user configuration completed"
+  SHELL
+  
+  # Service configuration with auto-login for vagrant user
+  config.vm.provision "shell", name: "services", inline: <<-SHELL
+    echo "⚙️ Configuring system services for Wayland..."
+    
+    # Enable essential services
+    systemctl enable greetd
+    systemctl enable NetworkManager
+    systemctl enable bluetooth
+    
+    # Configure greetd with tuigreet and auto-login for vagrant user
+    cat > /etc/greetd/config.toml << 'EOF'
+      [terminal]
+      vt = 1
+
+      [default_session]
+      command = "tuigreet --time --remember --remember-user-session --asterisks --cmd sway"
+      user = "greeter"
+
+      [initial_session]
+      command = "sway"
+      user = "vagrant"
+      EOF
+    
+    # Create systemd user service directory for vagrant
+    sudo -u vagrant mkdir -p /home/vagrant/.config/systemd/user
+    
+    # Set up environment variables for Wayland session
+    sudo -u vagrant bash -c '
+      cat > ~/.pam_environment << "EOF"
+        MOZ_ENABLE_WAYLAND=1
+        QT_QPA_PLATFORM=wayland
+        QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+        GDK_BACKEND=wayland
+        XDG_CURRENT_DESKTOP=sway
+        XDG_SESSION_DESKTOP=sway
+        XDG_SESSION_TYPE=wayland
+        WLR_NO_HARDWARE_CURSORS=1
+        EOF
+    '
+    
+    echo "✅ Services configured with auto-login for vagrant user"
+  SHELL
+  
+  # Final setup and information
+  config.vm.provision "shell", name: "final-setup", inline: <<-SHELL
+    echo "🎯 Final setup and optimizations..."
+    
+    # Update font cache
+    fc-cache -fv
+    
+    # Update desktop database
+    update-desktop-database
+    
+    # Create Pictures directory for screenshots
+    sudo -u vagrant mkdir -p /home/vagrant/Pictures
+    
+    # Clean package cache to save space
+    pacman -Sc --noconfirm
+
+    echo ""
+    echo "🌊 ==============================================="
+    echo "🌊  ARCH LINUX SWAY DOTFILES TEST VM READY!"
+    echo "🌊 ==============================================="
+    echo ""
+    echo "📋 VM Information:"
+    echo "   • Hostname: arch-vagrant-sway"
+    echo "   • Username: vagrant (auto-login enabled)"
+    echo "   • Desktop: Sway (Wayland)"
+    echo "   • Dotfiles location: ~/.dotfiles"
+    echo ""
+    echo "🚀 Next Steps:"
+    echo "   1. Reboot the VM: vagrant reload"
+    echo "   2. Access GUI via virt-viewer (recommended for Wayland)"
+    echo "   3. Or use: vagrant ssh (text-based access)"
+    echo "   4. Sym link dotfiles
+    echo ""
+    echo "💡 Your dotfiles are mapped to:"
+    echo "   • Host directory → VM: ~/.dotfiles"
+    echo "   • Any changes on host are immediately visible in VM"
+    echo ""
+    echo "📁 Standard Sway config locations:"
+    echo "   • Sway config: ~/.config/sway/config"
+    echo "   • Waybar config: ~/.config/waybar/config"
+    echo "   • Wofi: ~/.config/wofi/"
+    echo "   • Foot terminal: ~/.config/foot/foot.ini"
+    echo "   • Alacritty: ~/.config/alacritty/alacritty.toml"
+    echo "   • Mako notifications: ~/.config/mako/config"
+    echo ""
+    echo "🌊 Sway-specific features:"
+    echo "   • Screenshots: grim (full) / grim -g \"\$(slurp)\" (area)"
+    echo "   • Clipboard: wl-copy / wl-paste"
+    echo "   • Display config: wdisplays or kanshi"
+    echo "   • App launcher: wofi (instead of dmenu/rofi)"
+    echo "   • Status bar: waybar (instead of polybar)"
+    echo "   • Notifications: mako (instead of dunst)"
+    echo "   • Terminal: foot (native Wayland) or alacritty"
+    echo ""
+    echo "📱 Environment variables set:"
+    echo "   • MOZ_ENABLE_WAYLAND=1 (Firefox Wayland support)"
+    echo "   • QT_QPA_PLATFORM=wayland"
+    echo "   • GDK_BACKEND=wayland"
+    echo "   • XDG_SESSION_TYPE=wayland"
+    echo ""
+  SHELL
+end
