@@ -11,7 +11,7 @@ with pkgs; [
   jq yq-go glow fx
   
   # --- SYSTEM MONITORING ---
-  bottom btop dust procs neofetch fastfetch
+  bottom btop dust procs fastfetch
   
   # --- NETWORK TOOLS ---
   curl httpie netcat
@@ -48,5 +48,4 @@ with pkgs; [
   
   # --- UTILITIES ---
   watch entr parallel
-  stdenv.cc.cc.lib # Essential for Neovim Treesitter
 ]
