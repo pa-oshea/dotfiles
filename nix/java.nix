@@ -1,27 +1,23 @@
 { pkgs }:
-
 with pkgs; [
-  # Development tools
+  # Formatting & style
   google-java-format
   checkstyle
-  spring-boot-cli
-  
-  # Database & Migration
-  flyway
-  liquibase
-  
-  # Analysis & Documentation
+
+  # Static analysis
   spotbugs
   pmd
+
+  # Diagrams
   plantuml
-  
-  # Testing & Performance
-  jmeter
-  visualvm
-  
-  # Infrastructure
-  tomcat9
-  jetty
-  jib
+
+  # DB migration CLIs (useful globally for ad-hoc work)
+  flyway
+  liquibase
+
+  # Spring Boot CLI (useful for scaffolding)
+  spring-boot-cli
+
+  # Dependency resolution
   coursier
 ]
