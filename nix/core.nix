@@ -44,4 +44,7 @@ with pkgs; [
 
   # Utilities
   watch entr parallel
+
+  # ZSH Plugins
+  zsh-autosuggestions zsh-syntax-highlighting zsh-completions zsh-fzf-tab
 ]
