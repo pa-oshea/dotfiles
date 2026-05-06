@@ -1,27 +1,15 @@
-# Node.js development tools
-# Usage: nix-env -if ~/.dotfiles/nix/packages/languages/node.nix
-# Note: Use mise/nvm for actual Node.js runtime management
-
-{ pkgs ? import <nixpkgs> {} }:
-
+{ pkgs }:
 with pkgs; [
-  # Development tools
-  typescript             # TypeScript compiler
-  eslint                 # JavaScript/TypeScript linter
-  prettier               # Code formatter
-  
-  # Build tools
-  vite                   # Fast build tool
-  webpack                # Module bundler
-  
-  # Testing
-  jest                   # Testing framework
-  
-  # Utilities
-  serve                  # Static file server
-  nodemon                # Auto-restart on changes
-  npm-check-updates      # Check for package updates
-  
-  # Security
-  audit-ci               # Security audit in CI
+  # Formatting (global, used across projects)
+  nodePackages.prettier
+
+  # Dep management helper
+  nodePackages.npm-check-updates
+
+  # Static serving (handy globally)
+  nodePackages.serve
 ]
+# Removed: typescript, eslint — project-local (each project pins its own version)
+# Removed: vite, webpack, jest — 100% project-local, never install these globally
+# Removed: nodemon — use mise-managed node + project devShell
+# Removed: audit-ci — CI tool, lives in the project
