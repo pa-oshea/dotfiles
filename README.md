@@ -1,481 +1,267 @@
 # dotfiles
 
-![Desktop](./screenshots/desktop.png)
+Personal development environment for Linux. Nix manages CLI tools declaratively.
+Language runtimes are handled by **sdkman** (Java) and **mise** (Go, Node, Rust).
 
-## 🚀 Quick Setup
+---
+
+## Architecture
+
+```
+Layer           Tool        Manages
+──────────────────────────────────────────────────────
+System          pacman      git, base-devel, OS-level deps
+CLI Tools       Nix         ripgrep, neovim, tmux, lazygit, etc.
+Java runtimes   sdkman      JDK 21, 17, 11 — switchable per project
+Other runtimes  mise        Go, Node, Rust — version-pinned per project
+Config/dots     stow        symlinks from ~/.dotfiles into ~
+```
+
+Nix tools live in `/nix/store` and never touch system paths. Each layer owns
+a distinct concern and they don't interfere with each other.
+
+The Nix setup is **declarative**: `flake.nix` defines what to install,
+`flake.lock` pins exact versions. One command installs everything identically
+on every machine.
+
+---
+
+## New Machine Bootstrap
+
+Order matters — sdkman and mise must be in place before the shell loads your
+dotfiles, and Nix last so the profile is clean before you populate it.
 
 ```bash
-# Clone the repository
+# 1. Install Nix (Determinate installer — enables flakes, handles multi-user,
+#    provides a clean uninstaller)
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix \
+  | sh -s -- install
+
+# 2. Restart your shell (or open a new terminal)
+
+# 3. Install sdkman
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.local/share/sdkman/bin/sdkman-init.sh"
+sdk install java 21.0.3-tem
+
+# 4. Install mise
+curl https://mise.run | sh
+# mise will activate via your shell config after dotfiles are linked
+
+# 5. Clone dotfiles
 git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
-# Make scripts executable
-chmod +x install.sh scripts/*.sh
+# 6. Link dotfiles (stow reads the repo as a mirror of ~)
+stow .
 
-# One-command setup for new machines
-./scripts/quick-setup.sh
+# 7. Install Nix tools from the flake
+#    Core tools only:
+nix profile install ~/.dotfiles#core
+#    Core + language tooling (pick what you need):
+nix profile install ~/.dotfiles#java
+nix profile install ~/.dotfiles#go
 
-# Or manual setup with specific languages
-./scripts/install-nix.sh
-./install.sh --languages rust node python go java
+# 8. Install mise runtimes (reads ~/.config/mise/config.toml)
+mise install
+
+# 9. Restart shell — everything should be available
 ```
 
-## 🎯 Installation
+---
 
-### Core
+## What Gets Installed
 
-``` bash
-./install.sh
-```
+### Core (`nix/core.nix`)
 
-### With Languages
+| Category         | Tools                                          |
+|------------------|------------------------------------------------|
+| Shell            | starship, zoxide                               |
+| File & Search    | fd, ripgrep, bat, eza, fzf, yazi, tree         |
+| Text & Data      | jq, yq-go, glow, fx                            |
+| Monitoring       | bottom, btop, dust, procs, fastfetch           |
+| Network          | httpie, netcat                                 |
+| VCS              | lazygit, delta, git-absorb, gh, git-lfs        |
+| Editor           | neovim, luarocks                               |
+| Terminal         | tmux                                           |
+| Dev workflow     | direnv, just, mise, gum                        |
+| Analysis         | tokei, hyperfine, atac                         |
+| Containers       | dive, lazydocker, kubectl, helm, k9s           |
+| Linting          | shellcheck, yamllint                           |
+| Docs             | tealdeer, navi                                 |
+| Zsh plugins      | zsh-autosuggestions, zsh-syntax-highlighting, fzf-tab, zsh-completions |
+| Utilities        | watch, entr, parallel, rsync, unzip            |
+
+### Language Tooling
+
+These install ecosystem CLIs and static analysis tools — not the runtimes
+themselves (those are managed by sdkman/mise).
+
+| Package   | Command                                | What's included |
+|-----------|----------------------------------------|-----------------|
+| `java`    | `nix profile install ~/.dotfiles#java` | google-java-format, checkstyle, spotbugs, pmd, plantuml, flyway, liquibase, spring-boot-cli, coursier |
+| `go`      | `nix profile install ~/.dotfiles#go`   | golangci-lint, govulncheck, gofumpt, goimports, golines, gotests, goreleaser, delve, air, modd |
+| `rust`    | `nix profile install ~/.dotfiles#rust` | cargo-watch, cargo-edit, cargo-outdated, cargo-audit, cargo-expand, cargo-bloat, cargo-flamegraph, wasm-pack, mdbook |
+| `node`    | `nix profile install ~/.dotfiles#node` | prettier, npm-check-updates, serve |
+| `default` | `nix profile install ~/.dotfiles`      | Everything above combined |
+
+---
+
+## Runtime Management
+
+### Java — sdkman
 
 ```bash
-./install.sh --languages rust node python go java
+sdk install java 21.0.3-tem     # install a JDK
+sdk install java 17.0.11-tem
+sdk use java 21.0.3-tem         # switch for current session
+sdk default java 21.0.3-tem     # set global default
+sdk list java                   # browse available versions
 ```
 
-Development profile + language-specific tooling
+Pin a project to a specific JDK with `.sdkmanrc` in the project root:
 
-## 🔧 Usage Examples
-
-### Install Specific Package Sets
-
-```bash
-# Core tools only
-nix-env -if ~/.dotfiles/nix/packages/core.nix
-
-# Add language-specific tools
-nix-env -if ~/.dotfiles/nix/packages/languages/rust.nix
-nix-env -if ~/.dotfiles/nix/packages/languages/java.nix
+```ini
+java=21.0.3-tem
 ```
 
-### Language Runtime Management
+Run `sdk env` inside the project to activate it.
+
+### Go / Node / Rust — mise
 
 ```bash
-# Use mise for runtime versions
-mise install node@20.10.0
-mise install python@3.12.0
-mise install go@1.21.5
-mise install rust@1.75.0
-
-# Use SDKMAN for Java
-sdk install java 21.0.1-tem
-sdk install java 17.0.9-tem
-sdk use java 21.0.1-tem
+mise use --global node@22       # set global default
+mise use --global go@1.22
+mise use node@20                # pin current project (writes .mise.toml)
+mise list                       # show installed runtimes
+mise upgrade                    # upgrade all runtimes
 ```
 
-### Maintenance
+`~/.config/mise/config.toml` is symlinked from this repo, so `mise install`
+on a new machine restores your global runtime versions in one command.
+
+---
+
+## Maintenance
 
 ```bash
-# Update everything
-./scripts/update-all.sh
+# Update flake.lock to latest nixpkgs (then commit flake.lock)
+nix flake update ~/.dotfiles
 
-# Update with system packages
-./scripts/update-all.sh --system
+# Apply updates to your profile
+nix profile upgrade '.*'
 
-# Preview updates
-./scripts/update-all.sh --dry-run
+# See what's currently installed
+nix profile list
+
+# Roll back if something breaks
+nix profile rollback
+
+# Clean up old generations (free disk space)
+nix-collect-garbage -d
+
+# Update mise runtimes
+mise upgrade
+
+# Update sdkman itself + Java
+sdk selfupdate
+sdk upgrade java
 ```
 
-## 🧪 Testing
+---
 
-### Docker Testing (Recommended)
+## Testing in Docker
 
-Test the installation safely in disposable containers across different distributions:
+Test the install in a throwaway container before deploying to a real machine.
 
-#### Ubuntu/Debian Testing
-
-```bash
-# Ubuntu 22.04
-docker run -it --rm ubuntu:22.04 bash -c "
-  apt-get update && apt-get install -y git curl sudo xz-utils ca-certificates
-  useradd -m -s /bin/bash testuser
-  echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-  sudo -u testuser bash -c 'cd && git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./scripts/quick-setup.sh'
-"
-```
-
-#### Fedora Testing
+### Arch (closest to CachyOS)
 
 ```bash
-# Fedora Latest
-docker run -it --rm fedora:latest bash -c "
-  dnf install -y git curl sudo xz ca-certificates
-  useradd -m -s /bin/bash testuser
-  echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-  sudo -u testuser bash -c 'cd && git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./scripts/quick-setup.sh'
-"
-```
-
-#### Arch Linux Testing
-
-```bash
-# Arch Linux Latest
 docker run -it --rm archlinux:latest bash -c "
   pacman -Sy --noconfirm git curl sudo xz ca-certificates
   useradd -m -s /bin/bash testuser
   echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-  sudo -u testuser bash -c 'cd && git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./scripts/quick-setup.sh'
+  sudo -u testuser bash -c '
+    cd ~
+    git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
+    cd ~/.dotfiles
+    # Follow bootstrap steps manually
+  '
 "
 ```
 
-#### Arch Fish test
+### Ubuntu
 
 ```bash
-docker run -it --rm archlinux:latest bash -c "
-  pacman -Syu --noconfirm git curl sudo xz ca-certificates fish starship fzf ripgrep fd bat exa
+docker run -it --rm ubuntu:22.04 bash -c "
+  apt-get update && apt-get install -y git curl sudo xz-utils ca-certificates
   useradd -m -s /bin/bash testuser
   echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-  fish
+  sudo -u testuser bash -c '
+    cd ~
+    git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
+  '
 "
 ```
 
-#### Step-by-step testing (any distro)
+### Step-by-step
 
 ```bash
-# 1. Start container (replace with your preferred distro)
-docker run -it --rm ubuntu:22.04 bash
-
-# 2. Install dependencies (adjust package manager)
-# Ubuntu/Debian:
-apt-get update && apt-get install -y git curl sudo xz-utils ca-certificates
-
-# Fedora
-# dnf install -y git curl sudo xz ca-certificates
-
-# Arch:
-# pacman -Sy --noconfirm git curl sudo xz ca-certificates
-
-# 3. Create user with passwordless sudo
+# Nix won't install as root — always test as a regular user
+docker run -it --rm archlinux:latest bash
 useradd -m -s /bin/bash testuser
 echo 'testuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-
-# 4. Switch to test user
 su - testuser
 
-# 5. Clone and test dotfiles
-git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-./scripts/quick-setup.sh
+# Then follow the New Machine Bootstrap steps above
 ```
 
-#### Test different scenarios
+---
+
+## Troubleshooting
 
 ```bash
-# Test dry run
-./install.sh --dry-run --languages rust python
+# Check what Nix has installed
+nix profile list
 
-# Test with backup
-./install.sh --backup --languages node
+# Roll back last Nix change
+nix profile rollback
 
-# Test specific languages
-./install.sh --languages rust go java
+# Verify a tool is coming from Nix (not system)
+which lazygit && lazygit --version
 
-# Test minimal installation
-./install.sh
+# Check mise runtimes
+mise list
 
-# Test full installation with all languages
-./install.sh --languages rust node python go java
-```
+# Check active Java
+sdk current java
 
-### Other Testing Options
-
-#### Virtual Machine (Vagrant)
-
-```bash
-# Test Ubuntu 22.04
-cp vagrant/Vagrantfile.ubuntu22 Vagrantfile 
-vagrant up
-vagrant ssh
-# Test your dotfiles, then exit
-
-# Destroy and test Fedora
-vagrant destroy -f
-cp Vagrantfile.fedora Vagrantfile 
-vagrant up
-vagrant ssh
-# Test your dotfiles
-
-# And so on for each distro...
-# Then:
-vagrant up
-vagrant ssh
-
-# Inside the VM:
-cd ~/.dotfiles
-./scripts/quick-setup.sh
-```
-
-### What Gets Tested
-
-- ✅ Nix package manager installation across distributions
-- ✅ Core CLI tools (zsh, fzf, ripgrep, bat, etc.)
-- ✅ Development tools (git, tmux, neovim, docker)
-- ✅ Language-specific tooling (optional)
-- ✅ Shell configuration and symlinks
-- ✅ Package manager compatibility (apt, dnf, pacman)
-- ✅ Error handling and recovery
-
-### Troubleshooting Tests
-
-If installation fails, check:
-
-```bash
-# Verify Nix installation
-nix --version
-
-# Check installed packages
-nix-env -q
-
-# View installation logs
-./install.sh --dry-run
-
-# Test specific distribution dependencies
-# Ubuntu/Debian: apt list --installed | grep -E "(git|curl|xz)"
-# Fedora: dnf list installed | grep -E "(git|curl|xz)"
-# Arch: pacman -Q | grep -E "(git|curl|xz)"
-
-# Rollback if needed
-nix-env --rollback
-```
-
-## 📚 Quick Commands
-
-```bash
-# Package management
-nix-env -q                     # List installed packages
-nix-env -e package-name        # Remove package
-nix-env --rollback            # Rollback changes
-nix-collect-garbage           # Clean up old packages
-
-# Language management
-mise list                     # Show installed runtimes
-mise install node@latest     # Install latest Node.js
-sdk list java                # Show available Java versions
-
-# System maintenance
-./scripts/update-all.sh       # Update everything
-tmux-sessionizer             # Quick project switching
-```
-
-## 🆘 Troubleshooting
-
-### Nix Issues
-
-```bash
-# Reinstall Nix
-./scripts/install-nix.sh uninstall
-./scripts/install-nix.sh install
-
-# Reset packages
-nix-env --rollback
-```
-
-### Shell Issues
-
-```bash
-# Reload configuration
+# Reload shell config
 source ~/.zshrc
-
-# Reinstall plugins
-rm -rf ~/.oh-my-zsh/custom/plugins/*
-./install.sh dev
 ```
 
 ---
 
-**One command to rule them all**: `./scripts/quick-setup.sh` 🚀
+## Repository Structure
 
----
-
-## 🔨 Manual Installation Reference
-
-### Configuration Linking
-
-```bash
-# Link configuration directories
-ln -sf ~/.dotfiles/dunst ~/.config/
-ln -sf ~/.dotfiles/i3 ~/.config/
-ln -sf ~/.dotfiles/kitty ~/.config/
-ln -sf ~/.dotfiles/picom ~/.config/
-ln -sf ~/.dotfiles/polybar ~/.config/
-ln -sf ~/.dotfiles/rofi ~/.config/
-ln -sf ~/.dotfiles/zsh ~/.config/
-ln -sf ~/.dotfiles/tmux ~/.config/
-
-# Link dotfiles
-ln -sf ~/.dotfiles/.zshenv ~/
-ln -sf ~/.dotfiles/.gitconfig ~/
-
-# Install scripts
-ln -sf ~/.dotfiles/scripts/tmux-sessionizer.sh ~/.local/bin/tmux-sessionizer
-
-# Install fonts
-mkdir -p ~/.local/share/fonts
-cp ~/.dotfiles/fonts/* ~/.local/share/fonts/
-fc-cache -fv
 ```
-
-### Core Tools Installation
-
-#### Nix Package Manager
-
-```bash
-# Install Nix (single-user)
-sh <(curl -L https://nixos.org/nix/install) --no-daemon
-
-# Install essential packages
-# Check core.nix for missing packages
-nix-env -iA \
-  nixpkgs.git \
-  nixpkgs.zsh \
-  nixpkgs.neovim \
-  nixpkgs.tmux \
-  nixpkgs.fzf \
-  nixpkgs.lazygit \
-  nixpkgs.ast-grep \
-  nixpkgs.lazydocker \
-  nixpkgs.neofetch \
-  nixpkgs.jq \
-  nixpkgs.delta \
-  nixpkgs.ripgrep \
-  nixpkgs.fd \
-  nixpkgs.eza \
-  nixpkgs.tokei \
-  nixpkgs.atac \
-  nixpkgs.yazi \
-  nixpkgs.bat \
-  nixpkgs.xsel \
-  nixpkgs.lsd \
-  nixpkgs.tldr
+~/.dotfiles/
+├── flake.nix           # Declares all Nix packages — the source of truth
+├── flake.lock          # Pins exact nixpkgs versions — always commit this
+├── nix/
+│   ├── core.nix        # Universal CLI tools (installed on every machine)
+│   ├── java.nix        # Java ecosystem tools
+│   ├── go.nix          # Go ecosystem tools
+│   ├── rust.nix        # Rust/cargo tools
+│   └── node.nix        # Node ecosystem tools
+├── shells/
+│   ├── rust.nix        # Per-project devShell (gcc, openssl, pkg-config)
+│   └── java.nix        # Per-project devShell (jmeter, visualvm)
+├── zsh/
+│   ├── .zshenv         # Environment, PATH, tool homes (loaded always)
+│   └── .zshrc          # Interactive config, plugins, prompt
+├── tmux/
+├── neovim/
+└── scripts/
+    └── update-all.sh
 ```
-
-#### Shell Setup
-
-```bash
-# Install Oh My Zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# Install Zsh plugins
-git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-completions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
-git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/wfxr/forgit.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/forgit
-
-# Set Zsh as default shell
-chsh -s $(which zsh)
-```
-
-#### Terminal Enhancements
-
-```bash
-# Starship prompt
-curl -sS https://starship.rs/install.sh | sh
-
-# Zoxide (smart cd)
-curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
-
-# FZF (if not installed via Nix)
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install
-```
-
-### Development Tools
-
-#### Language Runtimes
-
-```bash
-# Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# SDKMAN (Java, Kotlin, Scala, etc.)
-curl -s "https://get.sdkman.io" | bash
-
-# Node Version Manager
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-```
-
-#### Development Tools (Go-based)
-
-```bash
-# Ensure Go is installed, then:
-go install github.com/jesseduffield/lazygit@latest
-go install github.com/jesseduffield/lazydocker@latest
-```
-
-### Tmux Setup
-
-#### System Installation
-
-| Platform         | Install Command     |
-| ---------------- | ------------------- |
-| Arch Linux       | `pacman -S tmux`    |
-| Debian/Ubuntu    | `apt install tmux`  |
-| Fedora           | `dnf install tmux`  |
-| RHEL/CentOS      | `yum install tmux`  |
-| openSUSE         | `zypper install tmux` |
-| macOS            | `brew install tmux` |
-
-#### Plugin Manager
-
-```bash
-# Install TPM (Tmux Plugin Manager)
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-```
-
-#### Building from Source (if needed)
-
-```bash
-# Install dependencies first (varies by system)
-# Ubuntu/Debian: apt install libevent-dev ncurses-dev build-essential bison pkg-config
-# Fedora: dnf install libevent-devel ncurses-devel gcc make bison
-
-git clone https://github.com/tmux/tmux.git
-cd tmux
-sh autogen.sh
-./configure && make
-sudo make install
-```
-
-### Neovim Setup
-
-For the latest Neovim, refer to the [official installation guide](https://github.com/neovim/neovim/blob/master/INSTALL.md).
-
-#### Building from Source
-
-```bash
-# Install dependencies (Ubuntu/Debian example)
-sudo apt install ninja-build gettext cmake unzip curl
-
-git clone https://github.com/neovim/neovim
-cd neovim
-git checkout stable
-make CMAKE_BUILD_TYPE=RelWithDebInfo
-sudo make install
-```
-
-### Bat theme
-
-1. Create a theme folder in bat's [configuration directory](https://github.com/sharkdp/bat#configuration-file) by running:
-
-   ```bash
-   mkdir -p "$(bat --config-dir)/themes"
-   ```
-
-2. Copy the theme files from this repository:
-
-   ```bash
-   wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Latte.tmTheme
-   wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Frappe.tmTheme
-   wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Macchiato.tmTheme
-   wget -P "$(bat --config-dir)/themes" https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme
-   ```
-
-3. Rebuild bat's cache:
-
-   ```bash
-   bat cache --build
-   ```
-
-4. Run `bat --list-themes`, and check if the themes are present in the list.
