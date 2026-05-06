@@ -3,74 +3,21 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Oh My Zsh Configuration
+# Completion System
 # -----------------------------------------------------------------------------
-export ZSH="$HOME/.oh-my-zsh"
-
-# Theme (empty because we use Starship)
-ZSH_THEME=""
-
-# Update behavior
-zstyle ':omz:update' mode reminder
-zstyle ':omz:update' frequency 7
-
-# Plugin configuration
-plugins=(
-    # Core development
-    git
-    docker
-    docker-compose
-    
-    # Language support
-    golang
-    mvn
-    npm
-    nvm
-    rust
-    spring
-    sdk
-    
-    # Enhanced shell experience
-    fzf
-    fzf-tab
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    
-    # Utilities
-    alias-finder
-    command-not-found
-    dotenv
-    eza
-    sudo
-    tmux
-    vagrant
-)
-
-# Add completions to fpath before Oh My Zsh loads
-fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
-
-# Optimize completion dump location
-export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
-
-# Load Oh My Zsh
-source $ZSH/oh-my-zsh.sh
-
-# -----------------------------------------------------------------------------
-# Completion System Optimization
-# -----------------------------------------------------------------------------
-# Load completions efficiently
 autoload -Uz compinit
 
-# Only regenerate compdump once per day
-for dump in ~/.zcompdump(N.mh+24); do
-    compinit
-done
-compinit -C
+# Regenerate compdump at most once per day
+if [[ -n "$XDG_CACHE_HOME/zsh/compdump"(#qN.mh+24) ]]; then
+    compinit -d "$XDG_CACHE_HOME/zsh/compdump"
+else
+    compinit -C -d "$XDG_CACHE_HOME/zsh/compdump"
+fi
 
 # -----------------------------------------------------------------------------
 # Zsh Options
 # -----------------------------------------------------------------------------
-# History options
+# History
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_ALL_DUPS
@@ -81,48 +28,78 @@ setopt SHARE_HISTORY
 setopt APPEND_HISTORY
 setopt INC_APPEND_HISTORY
 
-# Directory options
+# Directory navigation
 setopt AUTO_CD
 setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_SILENT
 
-# Completion options
+# Completion
 setopt COMPLETE_IN_WORD
 setopt ALWAYS_TO_END
 setopt AUTO_MENU
 setopt AUTO_LIST
 setopt AUTO_PARAM_SLASH
 
-# Other useful options
+# Misc
 setopt CORRECT
 setopt INTERACTIVE_COMMENTS
 setopt MULTIOS
 setopt NO_BEEP
 
 # -----------------------------------------------------------------------------
-# Plugin Configuration
+# Completion Styling
 # -----------------------------------------------------------------------------
-
-# Alias-finder configuration
-zstyle ':omz:plugins:alias-finder' autoload yes
-zstyle ':omz:plugins:alias-finder' longer yes
-zstyle ':omz:plugins:alias-finder' exact yes
-zstyle ':omz:plugins:alias-finder' cheaper yes
-
-# Completion styling
-zstyle ':completion:*:git-checkout:*' sort false
-zstyle ':completion:*:descriptions' format '[%d]'
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' menu no
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*:git-checkout:*' sort false
 
-# FZF-tab configuration
+# fzf-tab
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always $realpath'
 zstyle ':fzf-tab:*' switch-group '<' '>'
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
 # -----------------------------------------------------------------------------
-# FZF Configuration
+# Plugins (sourced from Nix store via nixpkgs)
+# -----------------------------------------------------------------------------
+# These paths are populated by Nix — no plugin manager needed
+if [[ -d "$NIX_PROFILE_PLUGINS" ]]; then
+    source "$NIX_PROFILE_PLUGINS/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    source "$NIX_PROFILE_PLUGINS/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    source "$NIX_PROFILE_PLUGINS/share/fzf-tab/fzf-tab.plugin.zsh"
+fi
+
+# More robust fallback: find them wherever Nix put them
+() {
+    local nix_profile="${HOME}/.nix-profile"
+
+    local autosugg="${nix_profile}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    local synhigh="${nix_profile}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    local fzftab="${nix_profile}/share/fzf-tab/fzf-tab.plugin.zsh"
+
+    [[ -f "$autosugg" ]] && source "$autosugg"
+    [[ -f "$synhigh"  ]] && source "$synhigh"
+    [[ -f "$fzftab"   ]] && source "$fzftab"
+}
+
+# Zsh completions (from nixpkgs zsh-completions)
+fpath=("$HOME/.nix-profile/share/zsh/site-functions" $fpath)
+fpath=("$HOME/.nix-profile/share/zsh-completions" $fpath)
+
+# -----------------------------------------------------------------------------
+# Key Bindings
+# -----------------------------------------------------------------------------
+bindkey -e                          # Emacs key bindings (ctrl-a, ctrl-e, etc.)
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+bindkey '^[[3~' delete-char
+
+# -----------------------------------------------------------------------------
+# FZF
 # -----------------------------------------------------------------------------
 export FZF_DEFAULT_OPTS="\
     --reverse \
@@ -133,7 +110,6 @@ export FZF_DEFAULT_OPTS="\
     --preview-window=right:50%:wrap \
     --bind shift-up:preview-up,shift-down:preview-down \
     --bind '?:toggle-preview' \
-    --bind 'ctrl-y:execute-silent(echo {} | pbcopy)' \
     --bind 'ctrl-e:execute(echo {} | xargs -o \$EDITOR)' \
     --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
     --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
@@ -141,29 +117,19 @@ export FZF_DEFAULT_OPTS="\
     --pointer='▶' \
     --marker=''"
 
-# FZF key bindings (if not loaded by plugin)
-if [[ ! "$plugins" =~ "fzf" ]]; then
-    source <(fzf --zsh) 2>/dev/null
-fi
+# Load fzf shell integration (key bindings + completion)
+source <(fzf --zsh) 2>/dev/null
 
 # -----------------------------------------------------------------------------
 # Tool Initialization
 # -----------------------------------------------------------------------------
-
-# Initialize Starship prompt
 eval "$(starship init zsh)"
-
-# Initialize zoxide (smart cd)
 eval "$(zoxide init --cmd cd zsh)"
-
-# Initialize mise
 eval "$(mise activate zsh)"
 
-# Load aliases
+# -----------------------------------------------------------------------------
+# Local Overrides & Extras
+# -----------------------------------------------------------------------------
 [[ -f "$ZDOTDIR/.zshalias" ]] && source "$ZDOTDIR/.zshalias"
-
-# Load custom functions
-[[ -f "$ZDOTDIR/.zshfunc" ]] && source "$ZDOTDIR/.zshfunc"
-
-# Load local configuration if it exists
+[[ -f "$ZDOTDIR/.zshfunc"  ]] && source "$ZDOTDIR/.zshfunc"
 [[ -f "$ZDOTDIR/.zshrc.local" ]] && source "$ZDOTDIR/.zshrc.local"
