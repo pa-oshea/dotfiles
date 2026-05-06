@@ -34,8 +34,7 @@ dotfiles, and Nix last so the profile is clean before you populate it.
 ```bash
 # 1. Install Nix (Determinate installer — enables flakes, handles multi-user,
 #    provides a clean uninstaller)
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix \
-  | sh -s -- install
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 
 # 2. Restart your shell (or open a new terminal)
 
