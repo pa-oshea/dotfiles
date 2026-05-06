@@ -40,7 +40,7 @@ with pkgs; [
   sqlite
 
   # Help & docs
-  which tealdeer navi tldr
+  which tealdeer navi
 
   # Utilities
   watch entr parallel
