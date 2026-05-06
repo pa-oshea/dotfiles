@@ -1,51 +1,47 @@
 { pkgs }:
-
 with pkgs; [
-  # --- SHELL UI (Managed by Nix) ---
-  starship        # Cross-shell prompt
-
-  # --- FILE & SEARCH (Modern Replacements) ---
+  # File & search
   fd ripgrep bat eza fzf zoxide
-  
-  # --- TEXT & DATA ---
+
+  # Text & data
   jq yq-go glow fx
-  
-  # --- SYSTEM MONITORING ---
+
+  # System monitoring
   bottom btop dust procs fastfetch
-  
-  # --- NETWORK TOOLS ---
-  curl httpie netcat
-  
-  # --- ARCHIVE HANDLING ---
+
+  # Network
+  httpie netcat
+
+  # Archive
   unzip gzip
-  
-  # --- VERSION CONTROL ---
-  git git-lfs lazygit delta git-absorb gh
-  
-  # --- TERMINAL & EDITING ---
-  tmux tmux-sessionizer neovim luarocks
-  
-  # --- FILE MANAGEMENT ---
+
+  # Version control  (remove git if CachyOS provides it)
+  git-lfs lazygit delta git-absorb gh
+
+  # Terminal & editing
+  tmux neovim luarocks
+
+  # File management
   tree yazi rsync
-  
-  # --- DEV WORKFLOW ---
+
+  # Dev workflow
   direnv just mise gum
-  
-  # --- ANALYSIS & BENCHMARKING ---
+
+  # Analysis & benchmarking
   tokei hyperfine atac
-  
-  # --- CONTAINER & K8S CLIENTS (CLI tools only) ---
+
+  # Container & k8s
   dive lazydocker kubectl helm k9s
-  
-  # --- LINTING ---
+
+  # Linting
   shellcheck yamllint
-  
-  # --- DATABASE ---
+
+  # Database
   sqlite
-  
-  # --- HELP & DOCS ---
-  which tealdeer navi
-  
-  # --- UTILITIES ---
+
+  # Help & docs
+  which tealdeer navi tldr
+
+  # Utilities
   watch entr parallel
 ]
