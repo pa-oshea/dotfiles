@@ -4,7 +4,7 @@ export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 
 # Work, clear Citrix LD_PRELOAD issues
 unset LD_PRELOAD
-export LD_PRELOD=""
+export LD_PRELOAD=""
 
 # Source the real config
 [[ -f "$ZDOTDIR/.zshenv" ]] && source "$ZDOTDIR/.zshenv"
