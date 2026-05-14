@@ -19,7 +19,7 @@ with pkgs; [
   git-lfs lazygit delta git-absorb gh
 
   # Terminal & editing
-  tmux neovim luarocks
+  tmux zellij neovim luarocks
 
   # File management
   tree yazi rsync
