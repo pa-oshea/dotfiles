@@ -257,6 +257,15 @@ mise upgrade
 
 # Re-link dotfiles after adding new files to the repo
 cd ~/.dotfiles && stow --no-folding -R .
+
+# 1. Update the lock file
+nix flake update ~/.dotfiles
+
+# 2. Re-install from the flake (this actually respects flake.lock)
+nix profile install ~/.dotfiles#core
+
+# Commit the updated lock file
+cd ~/.dotfiles && git add flake.lock && git commit -m "chore: update nixpkgs"
 ```
 
 ---
