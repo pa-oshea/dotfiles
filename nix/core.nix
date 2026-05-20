@@ -39,9 +39,6 @@ with pkgs; [
   # Linting
   shellcheck yamllint
 
-  # Clipboard (Wayland)
-  wl-clipboard
-
   # Database
   sqlite
 

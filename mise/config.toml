@@ -1,0 +1,31 @@
+[settings]
+asdf_compat = true
+experimental = true
+all_compile = false
+
+[tools]
+# --- Java Ecosystem ---
+java = "latest:corretto-21"
+maven = "latest"
+gradle = "latest"
+
+# --- JavaScript / TypeScript Ecosystem ---
+node = { version = "22", postinstall = "corepack enable pnpm yarn" }
+
+# --- Systems & Cloud ---
+rust = "stable"
+go = "1.26"
+
+[env]
+# Dynamically mapping home directories for the compiler ecosystems
+JAVA_HOME = "{{ m.tools.java.path }}"
+GOROOT = "{{ m.tools.go.path }}"
+
+# Unified Path Prepend
+# Tells mise to expose language-specific global binary locations to the shell
+"PATH:prepend" = [
+  "{{env.HOME}}/.cargo/bin",                       # cargo install (Rust)
+  "{{env.HOME}}/go/bin",                           # go install / go get (Go)
+  "{{env.HOME}}/.local/share/pnpm",                # pnpm install -g (Node/TS)
+  "{{config_root}}/../.local/share/mise/installs/go/latest/bin"
+]
