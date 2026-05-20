@@ -15,17 +15,20 @@ with pkgs; [
   # Archive
   unzip gzip
 
-  # Version control  (remove git if CachyOS provides it)
+  # Version control
   git-lfs lazygit delta git-absorb gh
 
-  # Terminal & editing
-  tmux zellij neovim luarocks
+  # Terminal & multiplexers
+  tmux zellij
+
+  # Editor
+  neovim luarocks
 
   # File management
   tree yazi rsync
 
   # Dev workflow
-  direnv just mise gum
+  direnv just gum
 
   # Analysis & benchmarking
   tokei hyperfine atac
@@ -36,6 +39,9 @@ with pkgs; [
   # Linting
   shellcheck yamllint
 
+  # Clipboard (Wayland)
+  wl-clipboard
+
   # Database
   sqlite
 
@@ -43,8 +49,14 @@ with pkgs; [
   which tealdeer navi
 
   # Utilities
-  watch entr parallel
+  watch entr parallel stow
 
-  # ZSH Plugins
-  zsh-autosuggestions zsh-syntax-highlighting zsh-completions zsh-fzf-tab
+  # Prompt & shell tools
+  starship
+
+  # Zsh plugins (sourced from Nix store in .zshrc — no plugin manager needed)
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  zsh-completions
+  zsh-fzf-tab
 ]

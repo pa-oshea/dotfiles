@@ -23,11 +23,5 @@
         rust = mkEnv "rust-env"  (import ./nix/rust.nix  { inherit pkgs; });
         node = mkEnv "node-env"  (import ./nix/node.nix  { inherit pkgs; });
       };
-
-      # Project-level shells (nix develop .#rust-project etc.)
-      devShells.${system} = {
-        rust-project = import ./shells/rust.nix { inherit pkgs; };
-        java-project = import ./shells/java.nix { inherit pkgs; };
-      };
     };
 }

@@ -1,3 +1,4 @@
+
 # =============================================================================
 # ZSH INTERACTIVE CONFIGURATION
 # =============================================================================
@@ -56,37 +57,34 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:git-checkout:*' sort false
 
 # fzf-tab
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+zstyle ':fzf-tab:complete:cd:*'         fzf-preview 'eza -1 --color=always $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always $realpath'
-zstyle ':fzf-tab:*' switch-group '<' '>'
-zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+zstyle ':fzf-tab:*'                     switch-group '<' '>'
 
-# -----------------------------------------------------------------------------
-# Plugins (sourced from Nix store via nixpkgs)
-# -----------------------------------------------------------------------------
-# These paths are populated by Nix — no plugin manager needed
-if [[ -d "$NIX_PROFILE_PLUGINS" ]]; then
-    source "$NIX_PROFILE_PLUGINS/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    source "$NIX_PROFILE_PLUGINS/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-    source "$NIX_PROFILE_PLUGINS/share/fzf-tab/fzf-tab.plugin.zsh"
+# Use tmux popup if inside tmux, otherwise plain fzf (works in zellij too)
+if [[ -n "$TMUX" ]]; then
+    zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 fi
 
-# More robust fallback: find them wherever Nix put them
-() {
-    local nix_profile="${HOME}/.nix-profile"
-
-    local autosugg="${nix_profile}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    local synhigh="${nix_profile}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-    local fzftab="${nix_profile}/share/fzf-tab/fzf-tab.plugin.zsh"
-
-    [[ -f "$autosugg" ]] && source "$autosugg"
-    [[ -f "$synhigh"  ]] && source "$synhigh"
-    [[ -f "$fzftab"   ]] && source "$fzftab"
-}
-
-# Zsh completions (from nixpkgs zsh-completions)
+# -----------------------------------------------------------------------------
+# Plugins (sourced from Nix store — no plugin manager needed)
+# -----------------------------------------------------------------------------
+# fpath must be set before compinit runs, but plugins source after
 fpath=("$HOME/.nix-profile/share/zsh/site-functions" $fpath)
 fpath=("$HOME/.nix-profile/share/zsh-completions" $fpath)
+
+() {
+    local nix="$HOME/.nix-profile"
+    local -A plugins=(
+        [autosugg]="$nix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+        [synhigh]="$nix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        [fzftab]="$nix/share/fzf-tab/fzf-tab.plugin.zsh"
+    )
+    # fzf-tab must be loaded after compinit and after syntax-highlighting
+    [[ -f "${plugins[autosugg]}" ]] && source "${plugins[autosugg]}"
+    [[ -f "${plugins[synhigh]}"  ]] && source "${plugins[synhigh]}"
+    [[ -f "${plugins[fzftab]}"   ]] && source "${plugins[fzftab]}"
+}
 
 # -----------------------------------------------------------------------------
 # Key Bindings
@@ -130,6 +128,6 @@ eval "$(mise activate zsh)"
 # -----------------------------------------------------------------------------
 # Local Overrides & Extras
 # -----------------------------------------------------------------------------
-[[ -f "$ZDOTDIR/.zshalias" ]] && source "$ZDOTDIR/.zshalias"
-[[ -f "$ZDOTDIR/.zshfunc"  ]] && source "$ZDOTDIR/.zshfunc"
+[[ -f "$ZDOTDIR/.zshalias"   ]] && source "$ZDOTDIR/.zshalias"
+[[ -f "$ZDOTDIR/.zshfunc"    ]] && source "$ZDOTDIR/.zshfunc"
 [[ -f "$ZDOTDIR/.zshrc.local" ]] && source "$ZDOTDIR/.zshrc.local"
