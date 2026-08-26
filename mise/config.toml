@@ -1,3 +1,5 @@
+min_version = "2026.8.0"
+
 [settings]
 asdf_compat = true
 experimental = true
@@ -5,7 +7,7 @@ all_compile = false
 
 [tools]
 # --- Java Ecosystem ---
-java = "latest:corretto-21"
+java = "zulu-21"
 maven = "latest"
 gradle = "latest"
 
@@ -18,12 +20,12 @@ go = "1.26"
 
 [env]
 # Dynamically mapping home directories for the compiler ecosystems
-JAVA_HOME = "{{ m.tools.java.path }}"
-GOROOT = "{{ m.tools.go.path }}"
+JAVA_HOME = { value = "{{ tools.java.path | default(value='') }}", tools = true }
+GOROOT = { value = "{{ tools.go.path | default(value='') }}", tools = true }
 
 # Unified Path Prepend
 # Tells mise to expose language-specific global binary locations to the shell
-"PATH:prepend" = [
+_.path = [
   "{{env.HOME}}/.cargo/bin",                       # cargo install (Rust)
   "{{env.HOME}}/go/bin",                           # go install / go get (Go)
   "{{env.HOME}}/.local/share/pnpm",                # pnpm install -g (Node/TS)
