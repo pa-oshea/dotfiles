@@ -1,0 +1,12 @@
+[[search_dirs]]
+path = "~/work"
+depth = 10
+
+[[search_dirs]]
+path = "~/dev"
+depth = 10
+
+[[search_dirs]]
+path = "~/.dotfiles"
+depth = 1
+
