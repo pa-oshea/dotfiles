@@ -19,7 +19,7 @@ with pkgs; [
   git-lfs lazygit delta git-absorb gh
 
   # Terminal & multiplexers
-  tmux zellij
+  tmux tmux-sessionizer zellij
 
   # Editor
   neovim luarocks
@@ -50,6 +50,9 @@ with pkgs; [
 
   # Prompt & shell tools
   starship
+
+  # Build tools
+  gcc gnumake pkg-config
 
   # Zsh plugins (sourced from Nix store in .zshrc — no plugin manager needed)
   zsh-autosuggestions
