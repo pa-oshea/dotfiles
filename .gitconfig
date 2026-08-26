@@ -2,8 +2,8 @@
     name = Patrick O'Shea
     email = p14oshea@gmail.com
 
-[include]
-    path = ~/.gitconfig.local
+[includeIf "gitdir:~/work/"]
+    path = ~/.gitconfig-work
 
 [core]
     pager = delta
