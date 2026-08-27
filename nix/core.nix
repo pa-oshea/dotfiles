@@ -59,4 +59,5 @@ with pkgs; [
   zsh-syntax-highlighting
   zsh-completions
   zsh-fzf-tab
+  zsh-forgit
 ]

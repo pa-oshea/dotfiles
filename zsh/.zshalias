@@ -8,6 +8,7 @@
 # -----------------------------------------------------------------------------
 alias lg="lazygit"
 alias ld="lazydocker"
+alias dsp="docker stop $(docker ps -a -q) && docker system prune -a"
 alias q="exit"
 
 # -----------------------------------------------------------------------------
