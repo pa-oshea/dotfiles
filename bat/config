@@ -1,0 +1,8 @@
+# Theme
+--theme="token-flint-dark"
+
+--map-syntax="*.conf:INI"
+--map-syntax=".gitconfig-work:Git Config"
+--map-syntax="*.mise.toml:TOML"
+
+--paging=auto

@@ -109,9 +109,11 @@ export FZF_DEFAULT_OPTS="\
     --bind shift-up:preview-up,shift-down:preview-down \
     --bind '?:toggle-preview' \
     --bind 'ctrl-e:execute(echo {} | xargs -o \$EDITOR)' \
-    --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
-    --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
-    --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
+    --color=fg:#DCE1E6,bg:#272C33,hl:#D58A6F \
+    --color=fg+:#DCE1E6,bg+:#3A414A,hl+:#D58A6F \
+    --color=border:#626C77,header:#7FA2BA,gutter:#272C33 \
+    --color=spinner:#C6A15A,info:#929BA5 \
+    --color=pointer:#D58A6F,marker:#94A477,prompt:#D58A6F
     --pointer='▶' \
     --marker=''"
 
