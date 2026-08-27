@@ -78,11 +78,13 @@ fpath=("$HOME/.nix-profile/share/zsh-completions" $fpath)
     local -A plugins=(
         [autosugg]="$nix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
         [synhigh]="$nix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        [forgit]="$nix/share/zsh/zsh-forgit/forgit.plugin.zsh"
         [fzftab]="$nix/share/fzf-tab/fzf-tab.plugin.zsh"
     )
     # fzf-tab must be loaded after compinit and after syntax-highlighting
     [[ -f "${plugins[autosugg]}" ]] && source "${plugins[autosugg]}"
     [[ -f "${plugins[synhigh]}"  ]] && source "${plugins[synhigh]}"
+    [[ -f "${plugins[forgit]}"   ]] && source "${plugins[forgit]}"
     [[ -f "${plugins[fzftab]}"   ]] && source "${plugins[fzftab]}"
 }
 
