@@ -177,3 +177,17 @@ alias fkill='ps -ef | fzf --header-lines=1 | awk "{print \$2}" | xargs kill -9'
 alias fenv='env | fzf | cut -d= -f1'
 alias ff='fd -t f | fzf'
 
+
+# -----------------------------------------------------------------------------
+# Maven
+# -----------------------------------------------------------------------------
+alias mvnci='mvn clean install'
+alias mvncist='mvn clean install -DskipTests'
+alias mvnboot='mvn spring-boot:run'
+
+# -----------------------------------------------------------------------------
+# Git
+# -----------------------------------------------------------------------------
+alias gst='git status'
+alias glg='git log --graph'
+alias glga='git log --graph --decorate --all'
