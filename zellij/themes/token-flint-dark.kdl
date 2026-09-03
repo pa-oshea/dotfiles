@@ -1,0 +1,15 @@
+themes {
+    token-flint-dark {
+        fg "#C3C8CC"
+        bg "#161B20"
+        black "#161B20"
+        red "#E3888C"
+        green "#9AA4AE"
+        yellow "#C5A15A"
+        blue "#88ACC4"
+        magenta "#EB9E83"
+        cyan "#858F9B"
+        white "#C3C8CC"
+        orange "#EB9E83"
+    }
+}

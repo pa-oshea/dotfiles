@@ -1,0 +1,30 @@
+layout {
+    default_tab_template {
+        children
+        pane size=1 borderless=true {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                format_left   "#[bg=#161B20,fg=#EB9E83,bold] {mode} #[bg=#161B20] {tabs}"
+                format_center ""
+                format_right  "#[bg=#161B20,fg=#9AA4AE]{command_git_branch}  #[bg=#161B20,fg=#C3C8CC]{session}  #[bg=#161B20,fg=#9AA4AE]{datetime}"
+                format_space  "#[bg=#161B20]"
+
+                tab_normal            "#[bg=#161B20,fg=#9AA4AE] {name} "
+                tab_active            "#[bg=#161B20,fg=#88ACC4,bold] {name} "
+                tab_normal_fullscreen "#[bg=#161B20,fg=#9AA4AE] {name} "
+
+                mode_normal "#[bg=#161B20,fg=#EB9E83,bold]"
+                mode_locked "#[bg=#161B20,fg=#E3888C,bold]"
+                mode_tab    "#[bg=#161B20,fg=#88ACC4,bold]"
+
+                command_git_branch_command  "git rev-parse --abbrev-ref HEAD"
+                command_git_branch_format   " {stdout}"
+                command_git_branch_interval "10"
+
+                border_enabled    false
+                datetime          "{format}"
+                datetime_format   "%H:%M %d-%b-%y"
+                datetime_timezone "Europe/Dublin"
+            }
+        }
+    }
+}

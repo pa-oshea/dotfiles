@@ -1,0 +1,24 @@
+// =============================================================================
+// ZELLIJ CONFIGURATION — Token Flint theme, default keybinds
+// =============================================================================
+
+theme "token-flint-dark"
+
+default_shell "zsh"
+mouse_mode true
+scroll_buffer_size 10000
+pane_frames true
+copy_command "wl-copy"       // swap for "pbcopy" (macOS) or "xclip -selection clipboard"
+copy_clipboard "system"
+copy_on_select true
+simplified_ui false
+default_layout "default"
+
+// Keeping default keybinds — nothing overridden here.
+
+plugins {
+    zjstatus location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"
+    forgot location="https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm"
+    room location="https://github.com/rvcas/room/releases/latest/download/room.wasm"
+    autolock location="https://github.com/fresh2dev/zellij-autolock/releases/latest/download/zellij-autolock.wasm"
+}
