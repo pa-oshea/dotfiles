@@ -147,7 +147,7 @@ layout {
         border_format   "#[fg=#3A424B]{char}"
         border_position "top"
     
-        mode_normal "#[bg=#88C0A8,fg=#161B20,bold] NORMAL#[bg=#161B20,fg=#88C0A8]█"
+        mode_normal "#[bg=#9AA4AE,fg=#161B20,bold] NORMAL#[bg=#161B20,fg=#9AA4AE]█"
         mode_locked "#[bg=#E3888C,fg=#161B20,bold] LOCKED #[bg=#161B20,fg=#E3888C]█"
         mode_resize "#[bg=#EB9E83,fg=#161B20,bold] RESIZE#[bg=#161B20,fg=#EB9E83]█"
         mode_pane   "#[bg=#88ACC4,fg=#161B20,bold] PANE#[bg=#161B20,fg=#88ACC4]█"
