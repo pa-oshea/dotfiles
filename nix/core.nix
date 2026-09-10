@@ -22,7 +22,7 @@ with pkgs; [
   tmux tmux-sessionizer zellij
 
   # Editor
-  neovim luarocks
+  neovim lua lua5_1 luarocks
 
   # File management
   tree yazi rsync
