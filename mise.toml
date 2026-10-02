@@ -18,6 +18,7 @@ dotfiles.default_mode = "symlink"
 "~/.config/ripgrep" = "ripgrep"
 "~/.config/mise" = "mise"
 "~/.config/tms" = "tms"
+"~/.copilot/copilot-instructions.md" = "copilot/copilot-instructions.md"
 
 # Scripts
 "~/.local/bin" = { source = "scripts", mode = "symlink-each"}
