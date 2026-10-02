@@ -13,7 +13,7 @@ Layer           Tool        Manages
 System          pacman      git, base-devel, OS-level deps
 CLI Tools       Nix         neovim, tmux, zellij, ripgrep, etc.
 All runtimes    mise        Java, Go, Node, Rust — per-project
-Config/dots     stow        symlinks from ~/.dotfiles into ~
+Config/dots     mise        symlinks from ~/.dotfiles into ~
 ```
 
 Nix tools live in `/nix/store` and never touch system paths. Each layer owns
@@ -29,70 +29,66 @@ on every machine.
 
 ---
 
-## Symlinking (link.sh)
+## Symlinking (mise dotfiles)
 
-`scripts/link.sh` creates all symlinks from the repo into `~`. The repo
-structure mirrors `~` exactly — `.config/` and `.local/` prefixes are
-preserved so everything lands in the right place.
+`mise` itself manages the symlinks, via the `[dotfiles]` table in
+`mise.toml`. Each entry maps a target path in `~` to a source path in this
+repo (relative to the repo root); directories are symlinked as a whole,
+individual files are linked file-by-file.
 
 ```bash
 # Preview what will be linked (no changes made)
-bash ~/.dotfiles/scripts/link.sh --dry-run
+mise dotfiles link --dry-run
 
 # Apply
-bash ~/.dotfiles/scripts/link.sh
+mise dotfiles link
 ```
 
-The script handles existing files safely — it backs them up with a timestamp
-before replacing them, and skips anything already correctly linked. Scripts
-under `.local/bin/` are made executable automatically.
+`mise` handles existing files safely — conflicting files are reported instead
+of being silently overwritten. Scripts under `scripts/` are linked
+individually (`mode = "symlink-each"`) into `~/.local/bin` and should be made
+executable manually (`chmod +x`) if you add a new one.
 
-To add a new config to the repo: put it at the correct mirrored path, add a
-`link` line to `scripts/link.sh`, and re-run the script.
+To add a new config to the repo: put it anywhere in the repo, add a matching
+entry under `[dotfiles]` in `mise.toml` (target path on the left, repo-relative
+source on the right), and re-run `mise dotfiles link`.
 
 ---
 
 ## Repository Structure
 
-TODO: The repo mirrors `~` exactly so stow works correctly:
+Unlike the old stow-based layout, the repo does **not** need to mirror `~`
+— each top-level directory is an arbitrary source path referenced explicitly
+from `mise.toml`.
 
 ```
 ~/.dotfiles/
-├── flake.nix                        # Nix packages — source of truth
-├── flake.lock                       # Pins exact nixpkgs versions — always commit
+├── flake.nix                 # Nix packages — source of truth
+├── flake.lock                # Pins exact nixpkgs versions — always commit
+├── mise.toml                 # [dotfiles] table — maps repo paths to ~ targets
 ├── nix/
-│   ├── core.nix                     # Universal CLI tools
-│   ├── java.nix                     # Java ecosystem tools
-│   ├── go.nix                       # Go ecosystem tools
-│   ├── rust.nix                     # Rust/cargo tools
-│   └── node.nix                     # Node ecosystem tools
-├── .zshenv                          # → ~/.zshenv (sets ZDOTDIR, loaded first)
-├── .config/
-│   ├── zsh/
-│   │   ├── .zshenv                  # → ~/.config/zsh/.zshenv
-│   │   ├── .zshrc                   # → ~/.config/zsh/.zshrc
-│   │   ├── .zshalias                # → ~/.config/zsh/.zshalias
-│   │   └── .zshfunc                 # → ~/.config/zsh/.zshfunc
-│   ├── tmux/
-│   │   └── tmux.conf                # → ~/.config/tmux/tmux.conf
-│   ├── starship/
-│   │   └── starship.toml            # → ~/.config/starship/starship.toml
-│   ├── yazi/
-│   │   ├── keymap.toml              # → ~/.config/yazi/keymap.toml
-│   │   ├── theme.toml               # → ~/.config/yazi/theme.toml
-│   │   └── yazi.toml                # → ~/.config/yazi/yazi.toml
-│   ├── ripgrep/
-│   │   └── config                   # → ~/.config/ripgrep/config
-│   └── mise/
-│       └── config.toml              # → ~/.config/mise/config.toml
-└── .local/
-    └── bin/
-        ├── tmux-sessionizer.sh      # → ~/.local/bin/tmux-sessionizer.sh
-        └── tmux-status-info.sh      # → ~/.local/bin/tmux-status-info.sh
+│   ├── core.nix               # Universal CLI tools
+│   ├── java.nix                # Java ecosystem tools
+│   ├── go.nix                   # Go ecosystem tools
+│   ├── rust.nix                  # Rust/cargo tools
+│   └── node.nix                   # Node ecosystem tools
+├── .zshenv                    # → ~/.zshenv (sets ZDOTDIR, loaded first)
+├── zsh/                       # → ~/.config/zsh
+├── tmux/                      # → ~/.config/tmux
+├── zellij/                    # → ~/.config/zellij
+├── starship/                  # → ~/.config/starship
+├── yazi/                      # → ~/.config/yazi
+├── ripgrep/                   # → ~/.config/ripgrep
+├── bat/                       # → ~/.config/bat
+├── lazygit/                   # → ~/.config/lazygit
+├── mise/                      # → ~/.config/mise
+├── tms/                       # → ~/.config/tms
+├── .gitconfig                 # → ~/.gitconfig
+└── scripts/                   # → ~/.local/bin (linked file-by-file)
 ```
 
-> **Note:** `nix/` and `flake.*` are not stowed — they are only used by
-> `nix profile install` and never symlinked into `~`.
+> **Note:** `nix/` and `flake.*` are not linked into `~` — they are only used
+> by `nix profile install`.
 
 ---
 
@@ -114,10 +110,10 @@ git clone https://github.com/pa-oshea/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
 # 5. Dry run first — preview what will be linked
-bash ~/.dotfiles/scripts/link.sh --dry-run
+mise dotfiles link --dry-run
 
-# 6. Link dotfiles (backs up any existing files automatically)
-bash ~/.dotfiles/scripts/link.sh
+# 6. Link dotfiles
+mise dotfiles link
 
 # 7. Verify symlinks are correct
 ls -la ~/.zshenv ~/.config/zsh/.zshrc ~/.config/tmux/tmux.conf
@@ -139,6 +135,9 @@ mise install
 ---
 
 ## What Gets Installed
+
+> For what each tool does and how to actually use it day-to-day (including
+> existing aliases), see **[TOOLS.md](./TOOLS.md)**.
 
 ### Core (`nix/core.nix`)
 
@@ -256,7 +255,7 @@ nix-collect-garbage -d
 mise upgrade
 
 # Re-link dotfiles after adding new files to the repo
-cd ~/.dotfiles && stow --no-folding -R .
+cd ~/.dotfiles && mise dotfiles link
 
 # 1. Update the lock file
 nix flake update ~/.dotfiles

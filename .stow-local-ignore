@@ -1,7 +1,0 @@
-^nix$
-^flake\.nix$
-^flake\.lock$
-^README\.md$
-^scripts$
-^\.git$
-^\.gitignore$

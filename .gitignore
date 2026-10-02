@@ -6,4 +6,5 @@ packer_compiled.lua
 .zcompdump.zwc
 .zhistory
 .vagrant
+*.bak
 
