@@ -143,9 +143,9 @@ mise install
 
 | Category         | Tools                                                        |
 |------------------|--------------------------------------------------------------|
-| Shell            | starship, zoxide                                             |
-| File & Search    | fd, ripgrep, bat, eza, fzf, yazi, tree                      |
-| Text & Data      | jq, yq-go, glow, fx                                         |
+| Shell            | starship, zoxide, atuin                                      |
+| File & Search    | fd, ripgrep, bat, eza, fzf, yazi, tree, sd, ast-grep         |
+| Text & Data      | jq, yq-go, glow, fx, visidata, lnav                          |
 | Monitoring       | bottom, btop, dust, procs, fastfetch                         |
 | Network          | httpie, netcat                                               |
 | VCS              | lazygit, delta, git-absorb, gh, git-lfs                      |
@@ -153,7 +153,7 @@ mise install
 | Terminal         | tmux, zellij                                                 |
 | Dev workflow     | direnv, just, gum                                            |
 | Analysis         | tokei, hyperfine, atac                                       |
-| Containers       | dive, lazydocker, kubectl, helm, k9s                         |
+| Containers       | dive, lazydocker, kubectl, helm, k9s, openshift, stern, kubectx, kcat |
 | Linting          | shellcheck, yamllint                                         |
 | Clipboard        | wl-clipboard (Wayland)                                       |
 | Docs             | tealdeer, navi                                               |

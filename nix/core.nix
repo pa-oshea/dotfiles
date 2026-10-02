@@ -1,10 +1,10 @@
 { pkgs }:
 with pkgs; [
   # File & search
-  fd ripgrep bat eza fzf zoxide
+  fd ripgrep bat eza fzf zoxide sd ast-grep
 
   # Text & data
-  jq yq-go glow fx
+  jq yq-go glow fx visidata lnav
 
   # System monitoring
   bottom btop dust procs fastfetch
@@ -34,7 +34,7 @@ with pkgs; [
   tokei hyperfine atac
 
   # Container & k8s
-  dive lazydocker kubectl helm k9s
+  dive lazydocker kubectl helm k9s openshift stern kubectx kcat
 
   # Linting
   shellcheck yamllint
@@ -49,7 +49,7 @@ with pkgs; [
   watch entr parallel stow
 
   # Prompt & shell tools
-  starship
+  starship atuin
 
   # Build tools
   gcc gnumake pkg-config

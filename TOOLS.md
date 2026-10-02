@@ -18,6 +18,8 @@ muscle memory.
 | **fzf** | Fuzzy finder, powers shell widgets | `Ctrl-R` (history), `Ctrl-T` (file insert), `Alt-C` (cd into dir). Also used by `fzf-tab` for completion menus and `fcd`/`ff`/`fkill`/`fenv`/`fh` aliases. |
 | **zoxide** | Smarter `cd` that learns frecency | Aliased over `cd` itself (`cd foo` jumps to the best match after you've visited it once). `zoxide query -l` lists ranked dirs. |
 | **tree** | Directory tree printer | `tree -L 2`. Prefer `lt`/`eza -T` day-to-day. |
+| **sd** | Intuitive find & replace, `sed` alternative | `sd 'old' 'new' file.txt`, `fd -e go \| xargs sd 'foo' 'bar'`. Plain string by default, regex with `-s`/no escaping headaches. |
+| **ast-grep** | Structural code search/lint/rewrite (AST-aware, not text-based) | `ast-grep run -p 'console.log($A)' -l js`, `ast-grep -p '$A.unwrap()'` to find patterns across a codebase. Great for refactors regex can't do safely. |
 
 ## Text & Data
 
@@ -27,6 +29,8 @@ muscle memory.
 | **yq-go** | YAML/JSON/XML query, jq-like syntax | `yq '.spec.containers[0].image' file.yaml`. Aliases: `yaml`, `prettyyml`. |
 | **glow** | Render Markdown in the terminal | `glow README.md`, `glow -p file.md` (pager). Aliases: `md`, `readme`, `mdprev`. |
 | **fx** | Interactive JSON viewer/explorer | `cat data.json \| fx` then navigate with arrow keys, `.` to drill in. Alias: `json`. |
+| **visidata** | Interactive spreadsheet for CSV/TSV/JSON/SQLite/etc. | `vd file.csv`, `vd file.json`. `` ` `` for column stats, `Shift-F` for frequency table, `g Ctrl-S` to save. |
+| **lnav** | Log file navigator — merges, filters, queries logs | `lnav /var/log/*.log`, `lnav -f` (follow, like `tail -f`). `:filter-in`/`:filter-out` to narrow, `;` for SQL queries over log data. |
 
 ## System Monitoring
 
@@ -102,6 +106,10 @@ muscle memory.
 | **kubectl** | Kubernetes CLI | Alias `kube`. |
 | **helm** | Kubernetes package manager | `helm install`, `helm upgrade`. |
 | **k9s** | Terminal Kubernetes UI | Alias `k9`. |
+| **openshift (oc)** | OpenShift CLI, superset of `kubectl` | `oc login`, `oc get pods`, `oc new-app`, `oc whoami`. Use instead of `kubectl` on OpenShift clusters. |
+| **stern** | Tail logs from multiple pods/containers at once, color-coded | `stern app-name`, `stern -l app=my-app -n namespace`. |
+| **kubectx** | Fast cluster/namespace switching | `kubectx` (list/switch clusters), `kubens` (list/switch namespaces) — both installed as part of the same package. |
+| **kcat** | Kafka producer/consumer CLI (formerly kafkacat) | `kcat -b broker:9092 -t topic -C` (consume), `kcat -b broker:9092 -t topic -P` (produce), `-L` to list metadata. |
 
 Extra Docker aliases: `dps` (formatted `ps`), `dlogs`, `dexec`, `dimg`, `dsp` (stop-all + prune — careful!).
 
@@ -140,6 +148,12 @@ Extra Docker aliases: `dps` (formatted `ps`), `dlogs`, `dexec`, `dimg`, `dsp` (s
 | Tool | What it's for | Quick usage |
 |------|----------------|-------------|
 | **starship** | Cross-shell prompt | Config at `starship/starship.toml` (theme: token-flint). Alias `starconfig` opens it. |
+
+## Shell History
+
+| Tool | What it's for | Quick usage |
+|------|----------------|-------------|
+| **atuin** | Searchable, contextual shell history (replaces default history search) | `Ctrl-R` opens the atuin search UI (fuzzy, filterable by directory/exit code/time). Up-arrow is left as plain zsh history recall (`--disable-up-arrow` in `.zshrc`). `atuin stats` for usage stats. Sync is **not** configured — history stays local only. |
 
 ## Build Tools
 

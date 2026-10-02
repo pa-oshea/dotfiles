@@ -128,6 +128,7 @@ source <(fzf --zsh) 2>/dev/null
 eval "$(starship init zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 eval "$(mise activate zsh)"
+eval "$(atuin init zsh --disable-up-arrow)"
 
 # -----------------------------------------------------------------------------
 # Local Overrides & Extras
