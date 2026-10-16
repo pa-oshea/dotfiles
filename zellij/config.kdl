@@ -126,6 +126,21 @@ keybinds clear-defaults=true {
             LaunchOrFocusPlugin "sessionizer" {
                 floating true
                 move_to_focused_tab true
+                cwd "/"
+                root_dirs "/home/by391/work;/home/by391/dev"
+                individual_dirs "/home/by392/.dotfiles"
+                session_layout "dev"
+            }
+            SwitchToMode "normal"
+        }
+        bind "G" {
+            LaunchOrFocusPlugin "sessionizer" {
+                floating true
+                move_to_focused_tab true
+                cwd "/"
+                root_dirs "/home/by391/work;/home/by391/dev"
+                individual_dirs "/home/by392/.dotfiles"
+                session_layout "default"
             }
             SwitchToMode "normal"
         }
@@ -176,6 +191,11 @@ keybinds clear-defaults=true {
         bind "Ctrl r" {
             LaunchOrFocusPlugin "forgot" {
                 floating true
+                LOAD_ZELLIJ_BINDINGS "true"
+                "Sessionizer (dev layout)" "Ctrl o g"
+                "Sessionizer (default layout)" "Ctrl o G"
+                "Todo tab (dev layout)" "Alt 5 / Ctrl t 5"
+                "Autolock toggle" "Ctrl g"
             }
         }
         bind "Ctrl y" {
@@ -311,6 +331,14 @@ plugins {
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
     zellij:link
+    // Auto-switches to locked mode while nvim/lazygit/etc. is focused so Ctrl+<key> reaches them
+    autolock {
+        is_enabled true
+        triggers "nvim|vim|git|fzf|zoxide|atuin"
+        watch_triggers "fzf|zoxide|atuin"
+        watch_interval "1.0"
+        reaction_seconds "0.3"
+    }
 }
 web_client {
     font "monospace"
